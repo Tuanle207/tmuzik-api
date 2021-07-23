@@ -17,8 +17,6 @@ jobs:
   build:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:5.0
-    requires:
-      - Run restore
     steps:
       - checkout
       - run:
@@ -29,8 +27,6 @@ jobs:
   deploy:
     docker:
       - image: cimg/base:2021.04
-    requires:
-      - Run build
     steps:
       - checkout
       - add_ssh_keys:
@@ -46,5 +42,9 @@ workflows:
   delployment: 
     jobs:
       - restore
-      - build
-      - deploy
+      - build:
+          requires:
+          - restore
+      - deploy:
+          requires:
+            - build
