@@ -26,7 +26,7 @@ jobs:
             dotnet build
   deploy:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:5.0
+      - image: cimg/base:2021.04
     steps:
       - checkout
       - add_ssh_keys:
