@@ -10,7 +10,7 @@ jobs:
     steps:
       - checkout
       - run:
-          working_directory: ~/project/src/Tmuzik.Api
+          working_directory: ~/project
           name: Run restore
           command: |
             dotnet restore
@@ -22,7 +22,7 @@ jobs:
     steps:
       - checkout
       - run:
-          working_directory: ~/project/src/Tmuzik.Api
+          working_directory: ~/project
           name: Run build
           command: |
             dotnet build
