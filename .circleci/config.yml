@@ -16,7 +16,9 @@ jobs:
             dotnet restore
   build:
     docker:
-    - image: mcr.microsoft.com/dotnet/sdk:5.0
+      - image: mcr.microsoft.com/dotnet/sdk:5.0
+    requires:
+      - restore
     steps:
       - checkout
       - run:
@@ -24,19 +26,17 @@ jobs:
           name: Run build
           command: |
             dotnet build
-    requires:
-      - restore
   deploy:
     docker:
       - image: cimg/base:2021.04
+    requires:
+      - build
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints:
             - $SSH_FINGERPRINT
       - run: /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "./deploy_project.sh"
-    requires:
-      - build
 
 workflows:
   # Below is the definition of your workflow.
