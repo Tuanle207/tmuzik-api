@@ -6,7 +6,7 @@ jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
   restore:
     docker:
-      - image: microsoft/dotnet:latest
+      - image: mcr.microsoft.com/dotnet/sdk:5.0
     steps:
       - checkout
       - run:
@@ -18,7 +18,7 @@ jobs:
              restore:
   build:
     docker:
-    - image: microsoft/dotnet:latest
+    - image: mcr.microsoft.com/dotnet/sdk:5.0
     steps:
       - checkout
       - run:
@@ -28,13 +28,13 @@ jobs:
             dotnet build
   deploy:
     docker:
-      - image: microsoft/dotnet:latest
+      - image: mcr.microsoft.com/dotnet/sdk:5.0
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints:
             - "c3:2d:85:3d:ce:d2:36:41:95:fa:c6:1e:d3:87:20:dc"
-      - run: ssh oStrictHostKeyChecking=no -v $DROPLET_USER@$DROPLET_IP "./deploy_project.sh"
+      - run: ssh $DROPLET_USER@$DROPLET_IP "./deploy_project.sh"
 
 
 workflows:
