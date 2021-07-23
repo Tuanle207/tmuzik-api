@@ -24,6 +24,8 @@ jobs:
           name: Run build
           command: |
             dotnet build
+    requires:
+      - restore
   deploy:
     docker:
       - image: cimg/base:2021.04
@@ -33,14 +35,15 @@ jobs:
           fingerprints:
             - $SSH_FINGERPRINT
       - run: /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "./deploy_project.sh"
-
+    requires:
+      - build
 
 workflows:
   # Below is the definition of your workflow.
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  sample: 
+  delployment: 
     jobs:
       - restore
       - build
