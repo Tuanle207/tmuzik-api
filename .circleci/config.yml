@@ -32,7 +32,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "c3:2d:85:3d:ce:d2:36:41:95:fa:c6:1e:d3:87:20:dc"
-      - run: /usr/bin/ssh $DROPLET_USER@$DROPLET_IP "./deploy_project.sh"
+      - run: /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "./deploy_project.sh"
 
 
 workflows:
