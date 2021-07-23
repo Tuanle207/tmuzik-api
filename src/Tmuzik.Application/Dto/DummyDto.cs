@@ -1,6 +1,6 @@
 namespace Tmuzik.Services.Dto
 {
-    public class DummDto
+    public class DummyDto
     {
         
     }

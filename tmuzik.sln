@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8EA37F9D-4F1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tmuzik.Api", "src\Tmuzik.Api\Tmuzik.Api.csproj", "{4CB881E2-341C-40B4-9F27-238AAFF2CD63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tmuzik.Services", "src\Tmuzik.Services\Tmuzik.Services.csproj", "{4B4EDC92-E71D-410A-9115-6434C0BAF692}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tmuzik.Application", "src\Tmuzik.Application\Tmuzik.Application.csproj", "{4B4EDC92-E71D-410A-9115-6434C0BAF692}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tmuzik.Data", "src\Tmuzik.Data\Tmuzik.Data.csproj", "{0300FA88-0BB6-4A5B-88CD-3AF79F55384B}"
 EndProject

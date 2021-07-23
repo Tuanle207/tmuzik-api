@@ -4,12 +4,12 @@ using Tmuzik.Services.Dto;
 
 namespace Tmuzik.Api.Configurations
 {
-    public static class ApplicationServicesConfigurations
+    public static partial class ServicesConfigurations
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
             services.Scan(
-                scan => scan.FromAssemblies(typeof(DummDto).GetTypeInfo().Assembly)
+                scan => scan.FromAssemblies(typeof(DummyDto).GetTypeInfo().Assembly)
                     .AddClasses()
                     .AsImplementedInterfaces()
                     .WithScopedLifetime()
