@@ -52,7 +52,7 @@ jobs:
           name: Generate SQL script for database migration
           command: |
             cd src/Tmuzik.Api
-            dotnet-ef migrations script -i -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../../dist/migrations_script.sql
+            ~/.dotnet/tools/dotnet-ef migrations script -i -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../../dist/migrations_script.sql
       # Get ENV Variables from CircleCI and fill them into configuration files
       # Then copy them to distribution directory
       - run:
