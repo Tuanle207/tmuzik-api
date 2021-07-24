@@ -23,23 +23,24 @@ jobs:
             dotnet test
   deployment:
     docker:
-      - image: cimg/base:2021.04
+      # - image: cimg/base:2021.04
+      - image: mcr.microsoft.com/dotnet/sdk:5.0
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints:
             - $SSH_FINGERPRINT
-      - run:
-          working_directory: ~/project
-          name: Install .NET SDK
-          command: |
-            wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-            sudo dpkg -i packages-microsoft-prod.deb
-            rm packages-microsoft-prod.deb
-            sudo apt-get update
-            sudo apt-get install -y apt-transport-https
-            sudo apt-get update
-            sudo apt-get install -y dotnet-sdk-5.0
+      # - run:
+      #     working_directory: ~/project
+      #     name: Install .NET SDK
+      #     command: |
+      #       wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+      #       sudo dpkg -i packages-microsoft-prod.deb
+      #       rm packages-microsoft-prod.deb
+      #       sudo apt-get update
+      #       sudo apt-get install -y apt-transport-https
+      #       sudo apt-get update
+      #       sudo apt-get install -y dotnet-sdk-5.0
       - run:
           working_directory: ~/project
           name: Build .Net Application for release
