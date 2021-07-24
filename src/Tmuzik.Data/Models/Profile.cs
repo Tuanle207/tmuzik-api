@@ -1,8 +1,9 @@
 using System;
+using Tmuzik.Infrastructure.Data.Models;
 
 namespace Tmuzik.Data.Models
 {
-    public class Profile
+    public class Profile : Entity
     {
         public string FullName { get; set; }
         public DateTime Dob { get; set; }
