@@ -53,11 +53,10 @@ jobs:
           working_directory: ~/project
           name: Fill Enviroment Variables in configuration files
           command: |
-            sed -i -- "s/<<USER_NAME>>/$DROPLET_USER/g" tmuzik-api.service &&
-            sed -i -- "s/<<HOST_IP>>/$DROPLET_IP/g" tmuzik-api.service &&
+            sed -i -- "s/@USER_NAME/$DROPLET_USER/g" tmuzik-api.service &&
+            sed -i -- "s/@HOST_IP/$DROPLET_IP/g" tmuzik-api.nginx &&
             cp tmuzik-api.service dist/ &&
-            cp tmuzik-api.nginx dist/ &&
-
+            cp tmuzik-api.nginx dist/
       - run:
           name: Stop .NET Application
           command: |
