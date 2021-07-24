@@ -1,19 +1,6 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. 
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
 jobs:
-  # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
-  restore:
-    docker:
-      - image: mcr.microsoft.com/dotnet/sdk:5.0
-    steps:
-      - checkout
-      - run:
-          working_directory: ~/project
-          name: Run restore
-          command: |
-            dotnet restore
   build:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:5.0
@@ -24,7 +11,17 @@ jobs:
           name: Run build
           command: |
             dotnet build
-  deploy:
+  test:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:5.0
+    steps:
+      - checkout
+      - run:
+          working_directory: ~/project
+          name: Run test
+          command: |
+            dotnet test
+  deployment:
     docker:
       - image: cimg/base:2021.04
     steps:
@@ -32,19 +29,80 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - $SSH_FINGERPRINT
-      - run: /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "./deploy_project.sh"
+      - run:
+          working_directory: ~/project
+          name: Install .NET SDK
+          command: |
+            wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+              && dpkg -i packages-microsoft-prod.deb
+              && rm packages-microsoft-prod.deb
+      - run:
+          working_directory: ~/project
+          name: Build .Net Application for release
+          command: |
+            dotnet publish -c Release -o dist
+      - run:
+          working_directory: ~/project
+          name: Generate SQL script for database migration
+          command: |
+            cd src/api &&
+            dotnet ef migrations script -i -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../../dist/migrations_script.sql
+      # Get ENV Variables from CircleCI and fill them into configuration files
+      # Then copy them to distribution directory
+      - run:
+          working_directory: ~/project
+          name: Fill Enviroment Variables in configuration files
+          command: |
+            sed -i -- "s/<<USER_NAME>>/$DROPLET_USER/g" tmuzik-api.service &&
+            sed -i -- "s/<<HOST_IP>>/$DROPLET_IP/g" tmuzik-api.service &&
+            cp tmuzik-api.service dist/ &&
+            cp tmuzik-api.nginx dist/ &&
 
+      - run:
+          name: Stop .NET Application
+          command: |
+            /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "
+              systemctl stop tmuzik-api.service &&
+              systemctl disable tmuzik-api.service &&
+              cd /var/www/html/tmuzik-api &&
+              rm -r -f dist
+            "
+      - run:
+          working_directory: ~/project
+          name: Copy distribution folder to hosting VPS
+          command: |
+            scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r ~/project/dist $DROPLET_USER@$DROPLET_IP:/var/www/html/tmuzik-api/
+      # Run database migrations
+      - run:
+          name: Run Database migrations
+          command: |
+            echo "Run Database migrations ------> TODO"
+      - run:
+          name: Start .NET Application
+          command: |
+            /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "
+              cd /var/www/html/tmuzik-api/dist &&
+              cp tmuzik-api.service /etc/systemd/system/tmuzik-api.service &&
+              cp tmuzik-api.nginx /etc/nginx/sites-available/tmuzik-api &&
+              ln -sf /etc/nginx/sites-available/tmuzik-api /etc/nginx/sites-enabled/ &&
+              nginx -t &&
+              systemctl enable tmuzik-api.service &&
+              systemctl restart nginx
+            "
 workflows:
-  # Below is the definition of your workflow.
-  # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
-  # CircleCI will run this workflow on every commit.
-  # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  delployment: 
+  build_and_test:
     jobs:
-      - restore
-      - build:
-          requires:
-          - restore
-      - deploy:
+      - build
+      - test:
           requires:
             - build
+  delployment:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deployment:
+          requires:
+            - test
+    
