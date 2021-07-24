@@ -33,9 +33,9 @@ jobs:
           working_directory: ~/project
           name: Install .NET SDK
           command: |
-            wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-              && dpkg -i packages-microsoft-prod.deb
-              && rm packages-microsoft-prod.deb
+            wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+            dpkg -i packages-microsoft-prod.deb
+            rm packages-microsoft-prod.deb
       - run:
           working_directory: ~/project
           name: Build .Net Application for release
@@ -45,7 +45,7 @@ jobs:
           working_directory: ~/project
           name: Generate SQL script for database migration
           command: |
-            cd src/api &&
+            cd src/api
             dotnet ef migrations script -i -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../../dist/migrations_script.sql
       # Get ENV Variables from CircleCI and fill them into configuration files
       # Then copy them to distribution directory
@@ -53,17 +53,17 @@ jobs:
           working_directory: ~/project
           name: Fill Enviroment Variables in configuration files
           command: |
-            sed -i -- "s/@USER_NAME/$DROPLET_USER/g" tmuzik-api.service &&
-            sed -i -- "s/@HOST_IP/$DROPLET_IP/g" tmuzik-api.nginx &&
-            cp tmuzik-api.service dist/ &&
+            sed -i -- "s/@USER_NAME/$DROPLET_USER/g" tmuzik-api.service
+            sed -i -- "s/@HOST_IP/$DROPLET_IP/g" tmuzik-api.nginx
+            cp tmuzik-api.service dist/
             cp tmuzik-api.nginx dist/
       - run:
           name: Stop .NET Application
           command: |
             /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "
-              systemctl stop tmuzik-api.service &&
-              systemctl disable tmuzik-api.service &&
-              cd /var/www/html/tmuzik-api &&
+              systemctl stop tmuzik-api.service
+              systemctl disable tmuzik-api.service
+              cd /var/www/html/tmuzik-api
               rm -r -f dist
             "
       - run:
@@ -80,12 +80,12 @@ jobs:
           name: Start .NET Application
           command: |
             /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP "
-              cd /var/www/html/tmuzik-api/dist &&
-              cp tmuzik-api.service /etc/systemd/system/tmuzik-api.service &&
-              cp tmuzik-api.nginx /etc/nginx/sites-available/tmuzik-api &&
-              ln -sf /etc/nginx/sites-available/tmuzik-api /etc/nginx/sites-enabled/ &&
-              nginx -t &&
-              systemctl enable tmuzik-api.service &&
+              cd /var/www/html/tmuzik-api/dist
+              cp tmuzik-api.service /etc/systemd/system/tmuzik-api.service
+              cp tmuzik-api.nginx /etc/nginx/sites-available/tmuzik-api
+              ln -sf /etc/nginx/sites-available/tmuzik-api /etc/nginx/sites-enabled/
+              nginx -t
+              systemctl enable tmuzik-api.service
               systemctl restart nginx
             "
 workflows:
