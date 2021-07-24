@@ -92,6 +92,7 @@ jobs:
               ln -sf /etc/nginx/sites-available/tmuzik-api /etc/nginx/sites-enabled/
               nginx -t
               systemctl enable tmuzik-api.service
+              systemctl start tmuzik-api.service
               systemctl restart nginx
             "
 workflows:
