@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Tmuzik.Infrastructure.Api.DependencyResolve;
+using Tmuzik.Infrastructure.DependencyInjections;
+using Tmuzik.Infrastructure.Repositories;
+using Tmuzik.Infrastructure.Services;
+using Tmuzik.Services.Dto;
 
 namespace Tmuzik.Api.Configurations
 {
     public static partial class ServicesConfigurations
     {
-        public static void AddServiceResolvers(this IServiceCollection services)
+        public static void AddAutoServiceResolvers(this IServiceCollection services)
         {
             
             var assemblies = AppDomain.CurrentDomain
@@ -20,6 +23,26 @@ namespace Tmuzik.Api.Configurations
                 .ToArray();
 
             AddServiced(services, assemblies);
+        }
+
+        public static void RegistersApplicationServices(this IServiceCollection services)
+        {
+            services.Scan(
+                scan => scan.FromAssemblies(typeof(DummyDto).Assembly)
+                    .AddClasses(classes => classes.AssignableTo<IService>())
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime()
+            );
+        }
+
+        public static void RegistersDataRepositories(this IServiceCollection services)
+        {
+            services.Scan(
+                scan => scan.FromAssemblies(typeof(DummyDto).Assembly)
+                    .AddClasses(classes => classes.AssignableTo(typeof(IRepository<>)))
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime()
+            );
         }
 
         private static IServiceCollection AddServiced(IServiceCollection services, params Assembly[] assemblies)
@@ -61,7 +84,7 @@ namespace Tmuzik.Api.Configurations
                typeof(ISingletonDependency),
                typeof(ITransientDependency<>),
                typeof(IScopedDependency<>),
-               typeof(ISingletonDependency<>),
+               typeof(ISingletonDependency<>)
             };
             return list
                 .Where(t => !types.Contains(t))
@@ -74,6 +97,7 @@ namespace Tmuzik.Api.Configurations
             var genericInterface = serviceToRegister
                 .GetInterfaces()
                 .FirstOrDefault(x => x.IsGenericType && typeof(IDependency).IsAssignableFrom(x));
+
 
             return (genericInterface != null
                 ? genericInterface.GetGenericArguments()[0]

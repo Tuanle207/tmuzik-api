@@ -1,4 +1,4 @@
-namespace Tmuzik.Infrastructure.Api.DependencyResolve
+namespace Tmuzik.Infrastructure.DependencyInjections
 {
     public interface ITransientDependency : IDependency
     {   

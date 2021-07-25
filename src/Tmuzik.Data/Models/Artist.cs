@@ -1,5 +1,5 @@
 using System;
-using Tmuzik.Infrastructure.Data.Models;
+using Tmuzik.Infrastructure.Models;
 
 namespace Tmuzik.Data.Models
 {

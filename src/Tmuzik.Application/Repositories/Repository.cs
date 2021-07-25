@@ -5,7 +5,8 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Tmuzik.Data;
-using Tmuzik.Infrastructure.Data.Models;
+using Tmuzik.Infrastructure.Models;
+using Tmuzik.Infrastructure.Repositories;
 
 namespace Tmuzik.Application.Repositories
 {

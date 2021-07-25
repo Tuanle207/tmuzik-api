@@ -1,6 +1,6 @@
 using Tmuzik.Data;
 using Tmuzik.Data.Models;
-using Tmuzik.Infrastructure.Api.DependencyResolve;
+using Tmuzik.Infrastructure.DependencyInjections;
 
 namespace Tmuzik.Application.Repositories
 {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Tmuzik.Infrastructure.Data.Models;
+using Tmuzik.Infrastructure.Models;
 
-namespace Tmuzik.Application.Repositories
+namespace Tmuzik.Infrastructure.Repositories
 {
     public interface IRepository<T> where T : Entity
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Tmuzik.Infrastructure.Data.Models
+namespace Tmuzik.Infrastructure.Models
 {
     public class Entity
     {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Tmuzik.Infrastructure.Api.DependencyResolve;
+using Tmuzik.Infrastructure.DependencyInjections;
 
 namespace Tmuzik.Infrastructure.Services.Authentication
 {

@@ -1,4 +1,4 @@
-namespace Tmuzik.Infrastructure.Data.Models
+namespace Tmuzik.Infrastructure.Models
 {
     public interface IHaveDescription
     {

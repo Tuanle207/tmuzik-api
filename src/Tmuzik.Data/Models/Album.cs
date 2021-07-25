@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Tmuzik.Infrastructure.Data.Models;
+using Tmuzik.Infrastructure.Models;
 
 namespace Tmuzik.Data.Models
 {

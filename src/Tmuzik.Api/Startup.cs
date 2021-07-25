@@ -51,9 +51,11 @@ namespace Tmuzik.Api
 
             services.AddAutoMapper(typeof(DummyDto).Assembly);
 
-            services.AddServiceResolvers();
+            services.AddAutoServiceResolvers();
 
-            services.AddApplicationServices();
+            services.RegistersApplicationServices();
+
+            services.RegistersDataRepositories();
             
             services.AddSwaggerGen(c =>
             {

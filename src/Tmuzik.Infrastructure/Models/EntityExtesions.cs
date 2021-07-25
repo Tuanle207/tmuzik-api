@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Tmuzik.Infrastructure.Data.Models
+namespace Tmuzik.Infrastructure.Models
 {
-    public static class ObjectExtesions
+    public static class EntityExtesions
     {
         public static void UpdateWith<T, TUpdate>(this T obj, TUpdate updateObj) where T : Entity
 		{
