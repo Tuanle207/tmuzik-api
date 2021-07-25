@@ -61,12 +61,12 @@ dotnet run
 
 To run add-migration command (**from Tmuzik.Api working directory**):
 ```sh
-dotnet ef migrations add <MIGRATION_NAME> -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o../Tmuzik.Data
+dotnet ef migrations add <MIGRATION_NAME> -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../Tmuzik.Data/Migrations
 ```
 
 To run remove-migration command:
 ```sh
-dotnet ef migrations remove -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o../Tmuzik.Data
+dotnet ef migrations remove -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../Tmuzik.Data/Migrations
 ```
 
 To run update-database command:
