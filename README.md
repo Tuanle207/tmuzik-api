@@ -14,7 +14,7 @@ Tmuzik is a audio streaming application that gives you the abilities to share an
 
 ## Tech
 
-Tmuzik Api uses a number of open source projects, development tools and technologies to work properly:
+Tmuzik uses a number of open source projects, development tools and technologies to work properly:
 
 - [.NET] - a developer platform with tools and libraries for building web applications
 - [React.js] - an awesome JavaScript library for building user interfaces
