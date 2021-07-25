@@ -9,7 +9,7 @@ Tmuzik is a audio streaming application that gives you the abilities to share an
 ## Features
 
 - Share and manage audio contents
-- Live stream/streaming audio
+- Live stream/stream audio
 - User interaction
 
 ## Tech
