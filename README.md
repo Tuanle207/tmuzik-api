@@ -1,6 +1,7 @@
 # Tmuzik
 ## Pipeline status
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=shield)](https://app.circleci.com/pipelines/github/Tuanle207/tmuzik-api?branch=master)
+
 The application is hosted at http://tuanle207.tech:3001
 
 Tmuzik is a audio streaming application that gives you the abilities to share and manage you audio content. Of course, you can access to others' audio content as well.
