@@ -7,6 +7,7 @@ namespace Tmuzik.Infrastructure.Data.Models
         string Email { get; set; }
         string Password { get; set; }
         string Token { get; set; }
+        string Salt { get; set; }
         string RefreshToken { get; set; }
         string FacebookAccessToken { get; set; }
         string GoogleAccessToken { get; set; }

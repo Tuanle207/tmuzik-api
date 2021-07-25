@@ -4,6 +4,7 @@ using AutoMapper;
 using Tmuzik.Application.Dto.Users;
 using Tmuzik.Application.Repositories;
 using Tmuzik.Data.Models;
+using Tmuzik.Infrastructure.Services.Authentication;
 
 namespace Tmuzik.Application.Services
 {
@@ -11,9 +12,11 @@ namespace Tmuzik.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+        private readonly JwtHelper _jwtHelper;
 
-        public UserService(IMapper mapper, IUserRepository userRepository)
+        public UserService(IMapper mapper, IUserRepository userRepository, JwtHelper jwtHelper)
         {
+            _jwtHelper = jwtHelper;
             _mapper = mapper;
             _userRepository = userRepository;
         }
@@ -30,7 +33,8 @@ namespace Tmuzik.Application.Services
             }
             // ...
 
-            // var user = _mapper.Map<User>(input);
+            var user = _mapper.Map<User>(input);
+            _jwtHelper.TestDI();
             // user = await _userRepository.AddAsync(user);
 
             return new SignupResponse
