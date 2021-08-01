@@ -9,11 +9,14 @@ namespace Tmuzik.Infrastructure.Repositories
 {
     public interface IRepository<T> where T : Entity
     {
-        IQueryable<T> AsQueryable(bool noTracking = true);
-        Task<T> GetOneAsync(Guid id);
-        Task<T> GetOneAsync(params Expression<Func<T, bool>>[] predicates);
-        Task<IEnumerable<T>> GetManyAsync(params Guid[] ids);
-        Task<IEnumerable<T>> GetManyAsync(params Expression<Func<T, bool>>[] predicates);
+        Expression<Func<T, bool>>[] CreateFilter(params Expression<Func<T, bool>>[] filter);
+        Expression<Func<T, TResult>> CreateProjector<TResult>(Expression<Func<T, TResult>> projector);
+        Task<TResult> GetOneAsync<TResult>(Expression<Func<T, bool>>[] filter, Expression<Func<T, TResult>> projector);
+        Task<T> GetOneAsync(Expression<Func<T, bool>>[] filter, bool noTracking = true);
+        Task<IEnumerable<TResult>> GetManyAsync<TResult>(Expression<Func<T, bool>>[] filter, Expression<Func<T, TResult>> projector);
+        IQueryable<T> Filter(Expression<Func<T, bool>>[] filter, bool noTracking = true);
+        IQueryable<TResult> Filter<TResult>(Expression<Func<T, bool>>[] filter, Expression<Func<T, TResult>> projector);
+        Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>>[] filter, bool noTracking = true);
         void Add(T entity);
         void AddMany(IEnumerable<T> entities);
         Task<T> AddAsync(T entity);

@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Tmuzik.Application.Services;
+using Tmuzik.Infrastructure.Services.Authorization;
 using Tmuzik.Services;
 
 
@@ -17,18 +19,23 @@ namespace Tmuzik.Api.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
+        private readonly IUserService _userService;
         private readonly ITestService _testService;
         private readonly ILogger<TestController> _logger;
 
-        public TestController(ITestService testService, ILogger<TestController> logger)
+        public TestController(ITestService testService,
+            IUserService userService, ILogger<TestController> logger)
         {
             _testService = testService;
             _logger = logger;
+            _userService = userService;
         }
 
-        [HttpGet("test")]
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> TestApi()
         {
+            await _userService.UserExists("let");
             return Ok(await _testService.TestApi());
         }
         [HttpGet("stream")]

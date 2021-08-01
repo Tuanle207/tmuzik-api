@@ -1,6 +1,6 @@
 using System;
 
-namespace Tmuzik.Application.Dto.Users
+namespace Tmuzik.Application.Dto.Requests
 {
     public class SignupRequest
     {

@@ -1,5 +1,8 @@
+using System;
 using System.Threading.Tasks;
-using Tmuzik.Application.Dto.Users;
+using Tmuzik.Application.Dto.Requests;
+using Tmuzik.Application.Dto.Responses;
+using Tmuzik.Infrastructure.Models;
 using Tmuzik.Infrastructure.Services;
 
 namespace Tmuzik.Application.Services
@@ -8,5 +11,8 @@ namespace Tmuzik.Application.Services
     {
         Task<SignupResponse> Signup(SignupRequest input);
         Task<LoginReponse> Login(LoginRequest input);
+        Task<AuthDto> GetUserById(Guid id);
+        Task<AuthDto> GetUserByEmail(string email);
+        Task<bool> UserExists(string email);
     }
 }

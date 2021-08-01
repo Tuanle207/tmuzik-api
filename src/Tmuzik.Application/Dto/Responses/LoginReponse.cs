@@ -1,6 +1,6 @@
 using System;
 
-namespace Tmuzik.Application.Dto.Users
+namespace Tmuzik.Application.Dto.Responses
 {
     public class LoginReponse
     {

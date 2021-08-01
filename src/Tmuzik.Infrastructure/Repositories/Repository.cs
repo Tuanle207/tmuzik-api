@@ -4,18 +4,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Tmuzik.Data;
 using Tmuzik.Infrastructure.Models;
-using Tmuzik.Infrastructure.Repositories;
 
-namespace Tmuzik.Application.Repositories
+namespace Tmuzik.Infrastructure.Repositories
 {
 
     public abstract class Repository<T> : IRepository<T> where T : Entity
     {
-        protected readonly AppDbContext _dbContext;
+        protected readonly DbContext _dbContext;
 
-        public Repository(AppDbContext dbContext)
+        public Repository(DbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -78,25 +76,22 @@ namespace Tmuzik.Application.Repositories
             }
         }
 
-        public IQueryable<T> AsQueryable(bool noTracking = true)
+        public Expression<Func<T, bool>>[] CreateFilter(params Expression<Func<T, bool>>[] filter)
         {
-            try 
-            {
-                return noTracking 
-                    ? _dbContext.Set<T>().AsNoTracking().AsQueryable()
-                    : _dbContext.Set<T>().AsQueryable();
-            } 
-            catch (Exception) 
-            {
-                throw new Exception();
-            }
+            return filter;
+        }
+
+        public Expression<Func<T, TResult>> CreateProjector<TResult>(Expression<Func<T, TResult>> projector)
+        {
+            return projector;
         }
 
         public async Task DeleteMany(params Guid[] ids)
         {
             try 
             {
-                var entities = await GetManyAsync(ids);
+                var filter = CreateFilter(x => ids.Contains(x.Id));
+                var entities = await GetManyAsync(filter);
                 foreach (var entity in entities)
                 {
                     _dbContext.Set<T>().Remove(entity);
@@ -112,7 +107,8 @@ namespace Tmuzik.Application.Repositories
         {
             try 
             {
-                var entities = await GetManyAsync(ids);
+                var filter = CreateFilter(x => ids.Contains(x.Id));
+                var entities = await GetManyAsync(filter);
                 foreach (var entity in entities)
                 {
                     _dbContext.Set<T>().Remove(entity);
@@ -129,7 +125,8 @@ namespace Tmuzik.Application.Repositories
         {
             try 
             {
-                var entity = await GetOneAsync(id);
+                var filter = CreateFilter(x => x.Id == id);
+                var entity = await GetOneAsync(filter);
                 _dbContext.Set<T>().Remove(entity);
             } 
             catch (Exception) 
@@ -154,7 +151,8 @@ namespace Tmuzik.Application.Repositories
         {
             try 
             {
-                var entity = await GetOneAsync(id);
+                var filter = CreateFilter(x => x.Id == id);
+                var entity = await GetOneAsync(filter);
                 _dbContext.Set<T>().Remove(entity);
                 await _dbContext.SaveChangesAsync();
             } 
@@ -177,6 +175,42 @@ namespace Tmuzik.Application.Repositories
             }
         }
 
+        public IQueryable<T> Filter(Expression<Func<T, bool>>[] filter, bool noTracking = true)
+        {
+            try 
+            {
+                var query = AsQueryable(noTracking);
+                foreach (var predicate in filter)
+                {
+                    query = query.Where(predicate);
+                }
+
+                return query;
+            } 
+            catch (Exception) 
+            {
+                throw new Exception();
+            }
+        }
+
+        public IQueryable<TResult> Filter<TResult>(Expression<Func<T, bool>>[] filter, Expression<Func<T, TResult>> projector)
+        {
+            try 
+            {
+                var query = AsQueryable();
+                foreach (var predicate in filter)
+                {
+                    query = query.Where(predicate);
+                }
+
+                return query.Select(projector);
+            } 
+            catch (Exception) 
+            {
+                throw new Exception();
+            }
+        }
+
         /// <summary>
         /// Find entity and id and update. Please use this with performance warning!!! 
         /// </summary>
@@ -188,8 +222,10 @@ namespace Tmuzik.Application.Repositories
         {
             try 
             {
-                var entity = await GetOneAsync(id);
-                entity.UpdateWith(update);
+                var filter = CreateFilter(x => x.Id == id);
+                var entity = await GetOneAsync(filter);
+                _dbContext.Set<T>().Attach(entity);
+                _dbContext.Entry(entity).State = EntityState.Modified;
                 await _dbContext.SaveChangesAsync();
                 return entity;
             } 
@@ -199,30 +235,21 @@ namespace Tmuzik.Application.Repositories
             }
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync(params Guid[] ids)
+        public async Task<IEnumerable<TResult>> GetManyAsync<TResult>(Expression<Func<T, bool>>[] filter, Expression<Func<T, TResult>> projector)
         {
             try 
             {
-                return await _dbContext.Set<T>()
-                    .Where(x => ids.Contains(x.Id))
+                var query = AsQueryable();
+                foreach (var predicate in filter)
+                {
+                    query = query.Where(predicate);
+                }
+
+                var result = await query
+                    .Select(projector)
                     .ToListAsync();
-            }
-            catch (Exception) 
-            {
-                throw new Exception();
-            }
-        }
 
-        public async Task<IEnumerable<T>> GetManyAsync(params Expression<Func<T, bool>>[] predicates)
-        {
-            try 
-            {
-                var query = AsQueryable();
-                foreach (var predicate in predicates)
-                {
-                    query = query.Where(predicate);
-                }
-                return await query.ToListAsync();
+                return result;
             } 
             catch (Exception) 
             {
@@ -230,12 +257,20 @@ namespace Tmuzik.Application.Repositories
             }
         }
 
-        public async Task<T> GetOneAsync(Guid id)
+        public async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>>[] filter, bool noTracking = true)
         {
             try 
             {
-                var query = AsQueryable(false);
-                return await query.FirstOrDefaultAsync(x => x.Id == id);
+                var query = AsQueryable(noTracking);
+                foreach (var predicate in filter)
+                {
+                    query = query.Where(predicate);
+                }
+                
+                var result = await query
+                    .ToListAsync();
+
+                return result;
             } 
             catch (Exception) 
             {
@@ -243,17 +278,42 @@ namespace Tmuzik.Application.Repositories
             }
         }
 
-        public async Task<T> GetOneAsync(params Expression<Func<T, bool>>[] predicates)
+        public async Task<TResult> GetOneAsync<TResult>(Expression<Func<T, bool>>[] filter, Expression<Func<T, TResult>> projector)
         {
             try 
             {
                 var query = AsQueryable();
-                foreach (var predicate in predicates)
+                foreach (var predicate in filter)
                 {
                     query = query.Where(predicate);
                 }
-                return await query.FirstOrDefaultAsync();
 
+                var result = await query
+                    .Select(projector)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            } 
+            catch (Exception) 
+            {
+                throw new Exception();
+            }
+        }
+
+        public async Task<T> GetOneAsync(Expression<Func<T, bool>>[] filter, bool noTracking = true)
+        {
+            try 
+            {
+                var query = AsQueryable(noTracking);
+                foreach (var predicate in filter)
+                {
+                    query = query.Where(predicate);
+                }
+
+                var result = await query
+                    .FirstOrDefaultAsync();
+
+                return result;
             } 
             catch (Exception) 
             {
@@ -299,5 +359,18 @@ namespace Tmuzik.Application.Repositories
             }
         }
 
+        protected IQueryable<T> AsQueryable(bool noTracking = true)
+        {
+            try 
+            {
+                return noTracking 
+                    ? _dbContext.Set<T>().AsNoTracking().AsQueryable()
+                    : _dbContext.Set<T>().AsQueryable();
+            } 
+            catch (Exception) 
+            {
+                throw new Exception();
+            }
+        }
     }
 }

@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Tmuzik.Api.Configurations;
+using Tmuzik.Api.Middlewares;
 using Tmuzik.Api.SignalR;
 using Tmuzik.Data;
 using Tmuzik.Services.Dto;
@@ -33,7 +27,7 @@ namespace Tmuzik.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(opt => opt.AddPolicy(DefaultPolicy, builder => 
+            services.AddCors(opt => opt.AddPolicy(DefaultPolicy, builder =>
             {
                 builder
                     .WithOrigins(Configuration["Url:CorsOrigins"].Split(','))
@@ -42,7 +36,7 @@ namespace Tmuzik.Api
                     .AllowCredentials();
             }));
 
-            services.AddJwtAuthentication(Configuration);
+            // services.AddJwtAuthentication(Configuration);
 
             services.AddControllers();
 
@@ -51,23 +45,26 @@ namespace Tmuzik.Api
 
             services.AddAutoMapper(typeof(DummyDto).Assembly);
 
+            services.AddHttpContextAccessor();
+
             services.AddAutoServiceResolvers();
 
             services.RegistersApplicationServices();
 
             services.RegistersDataRepositories();
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tmuzik.Api", Version = "v1" });
             });
-            
+
             services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -75,13 +72,15 @@ namespace Tmuzik.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tmuzik.Api v1"));
             }
 
+            app.UseGlobalExceptionHandler();
+
             // app.UseHttpsRedirection();
 
             app.UseCors(DefaultPolicy);
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseJwtAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

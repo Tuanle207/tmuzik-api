@@ -1,5 +1,7 @@
-using Tmuzik.Application.Dto.Users;
+using Tmuzik.Application.Dto.Requests;
+using Tmuzik.Application.Dto.Responses;
 using Tmuzik.Data.Models;
+using Tmuzik.Infrastructure.Models;
 
 namespace Tmuzik.Application.ObjectMapper
 {
@@ -8,6 +10,8 @@ namespace Tmuzik.Application.ObjectMapper
         public UserMapper()
         {
             CreateMap<SignupRequest, User>();
+            CreateMap<User, AuthDto>();
+            CreateMap<User, LoginReponse>();
         }
     }
 }
