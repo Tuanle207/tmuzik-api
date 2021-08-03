@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Tmuzik.Api.Configurations;
+using Tmuzik.Api.Filters;
 using Tmuzik.Api.Middlewares;
 using Tmuzik.Api.SignalR;
 using Tmuzik.Data;
@@ -27,7 +29,7 @@ namespace Tmuzik.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(opt => opt.AddPolicy(DefaultPolicy, builder =>
+            services.AddCors(options => options.AddPolicy(DefaultPolicy, builder =>
             {
                 builder
                     .WithOrigins(Configuration["Url:CorsOrigins"].Split(','))
@@ -36,9 +38,16 @@ namespace Tmuzik.Api
                     .AllowCredentials();
             }));
 
-            // services.AddJwtAuthentication(Configuration);
-
-            services.AddControllers();
+            services
+                .AddControllers(options =>
+                {
+                    options.Filters.Add<ExceptionFilter>();
+                    options.Filters.Add<ResultFilter>();
+                }).AddFluentValidation(options =>
+                {
+                    options.RegisterValidatorsFromAssemblyContaining<DummyDto>();
+                    options.DisableDataAnnotationsValidation = true;
+                });
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(Configuration["ConnectionStrings:Default"]));
@@ -49,9 +58,9 @@ namespace Tmuzik.Api
 
             services.AddAutoServiceResolvers();
 
-            services.RegistersApplicationServices();
+            services.AddApplicationServices();
 
-            services.RegistersDataRepositories();
+            services.AddDataRepositories();
 
             services.AddSwaggerGen(c =>
             {
@@ -71,8 +80,6 @@ namespace Tmuzik.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tmuzik.Api v1"));
             }
-
-            app.UseGlobalExceptionHandler();
 
             // app.UseHttpsRedirection();
 

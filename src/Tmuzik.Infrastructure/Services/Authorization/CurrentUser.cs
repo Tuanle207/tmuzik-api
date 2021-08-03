@@ -20,8 +20,6 @@ namespace Tmuzik.Infrastructure.Services.Authorization
         public CurrentUser(IHttpContextAccessor httpContextAccessor, ILogger<CurrentUser> logger)
         {
             _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
-            _logger.LogInformation(JsonSerializer.Serialize(httpContextAccessor.HttpContext.Items));
         }
 
         public bool IsAuthenticated => _authUser is not null;
@@ -32,7 +30,6 @@ namespace Tmuzik.Infrastructure.Services.Authorization
         {
             get
             {
-                _logger.LogInformation(JsonSerializer.Serialize(_authUser));
                 return _authUser is null ? null : _authUser.Email;
             }
         }

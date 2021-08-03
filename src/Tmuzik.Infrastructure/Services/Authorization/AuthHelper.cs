@@ -39,6 +39,14 @@ namespace Tmuzik.Infrastructure.Services.Authorization
 
         public bool VerifyPassword(string candidatePassword, string storedPasswordHashed, string salt)
         {
+            if (
+                string.IsNullOrEmpty(candidatePassword) ||
+                string.IsNullOrEmpty(storedPasswordHashed) ||
+                string.IsNullOrEmpty(salt)
+            )
+            {
+                return false;
+            }
             var key = Convert.FromBase64String(salt);
             var hashedPassword = Convert.FromBase64String(storedPasswordHashed);
             using(var hmac = new System.Security.Cryptography.HMACSHA512(key))
@@ -104,9 +112,8 @@ namespace Tmuzik.Infrastructure.Services.Authorization
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                _logger.LogInformation($"claims -- {System.Text.Json.JsonSerializer.Serialize(jwtToken.Claims)}");
+                
                 var id = jwtToken.Claims.FirstOrDefault(x => x.Type == "id").Value;
-                _logger.LogInformation($"id -- {id}");
                 return new Guid(id);
             }
             catch (Exception)

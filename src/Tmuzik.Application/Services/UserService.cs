@@ -15,54 +15,54 @@ namespace Tmuzik.Application.Services
     public class UserService : IUserService
     {
         private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly AuthHelper _authHelper;
         private readonly ICurrentUser _currentUser;
         private readonly ILogger<UserService> _logger;
 
         public UserService(ILogger<UserService> logger, IMapper mapper, 
-            IUserRepository userRepository, AuthHelper authHelper, ICurrentUser currentUser)
+            IUnitOfWork unitOfWork, AuthHelper authHelper, ICurrentUser currentUser)
         {
             _logger = logger;
             _authHelper = authHelper;
             _currentUser = currentUser;
             _mapper = mapper;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<AuthDto> GetUserByEmail(string email)
         {
-            var filter = _userRepository.CreateFilter(
+            var filter = _unitOfWork.Users.CreateFilter(
                 x => x.Email == email
             );
-            var projector = _userRepository.CreateProjector(
+            var projector = _unitOfWork.Users. CreateProjector(
                 x => _mapper.Map<AuthDto>(x)
             );
-            var result = await _userRepository.GetOneAsync(filter, projector);
+            var result = await _unitOfWork.Users.GetOneAsync(filter, projector);
                 
             return result;
         }
 
         public async Task<AuthDto> GetUserById(Guid id)
         {
-            var filter = _userRepository.CreateFilter(
+            var filter = _unitOfWork.Users.CreateFilter(
                 x => x.Id == id
             );
-            var projector = _userRepository.CreateProjector(
+            var projector = _unitOfWork.Users.CreateProjector(
                 x => _mapper.Map<AuthDto>(x)
             );
-            var result = await _userRepository.GetOneAsync(filter, projector);
+            var result = await _unitOfWork.Users.GetOneAsync(filter, projector);
                 
             return result;
         }
 
         public async Task<LoginReponse> Login(LoginRequest input)
         {
-            var filter = _userRepository.CreateFilter(
+            var filter = _unitOfWork.Users.CreateFilter(
                 x => x.Email == input.Email
             );
 
-            var user = await _userRepository.GetOneAsync(filter);
+            var user = await _unitOfWork.Users.GetOneAsync(filter);
             if (user == default)
             {
                 throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
@@ -87,7 +87,7 @@ namespace Tmuzik.Application.Services
 
             (user.Password, user.Salt) = _authHelper.HashPassword(user.Password);
 
-            user = await _userRepository.AddAsync(user);
+            user = await _unitOfWork.Users.AddAsync(user);
 
             return new SignupResponse
             {
@@ -99,10 +99,10 @@ namespace Tmuzik.Application.Services
         {
             var test = _currentUser.Test;
             _logger.LogInformation($"current user's email: {test}");
-            var filter = _userRepository.CreateFilter(
+            var filter = _unitOfWork.Users.CreateFilter(
                 x => x.Email == email
             );
-            var query = _userRepository.Filter(filter);
+            var query = _unitOfWork.Users.Filter(filter);
             return await query.AnyAsync();
         }
     }

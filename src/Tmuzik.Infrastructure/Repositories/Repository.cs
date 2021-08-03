@@ -9,7 +9,7 @@ using Tmuzik.Infrastructure.Models;
 namespace Tmuzik.Infrastructure.Repositories
 {
 
-    public abstract class Repository<T> : IRepository<T> where T : Entity
+    public class Repository<T> : IRepository<T> where T : Entity
     {
         protected readonly DbContext _dbContext;
 
@@ -26,7 +26,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -40,7 +40,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -55,7 +55,7 @@ namespace Tmuzik.Infrastructure.Repositories
             }
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -72,7 +72,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -99,7 +99,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -117,7 +117,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -131,7 +131,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -143,7 +143,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -158,7 +158,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -171,7 +171,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -189,7 +189,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -207,7 +207,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -231,7 +231,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -253,7 +253,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -274,7 +274,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -296,7 +296,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -317,7 +317,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -329,7 +329,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -341,7 +341,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -355,7 +355,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
 
@@ -369,7 +369,7 @@ namespace Tmuzik.Infrastructure.Repositories
             } 
             catch (Exception) 
             {
-                throw new Exception();
+                throw ExceptionBuilder.Exception();
             }
         }
     }

@@ -30,6 +30,5 @@ namespace Tmuzik.Infrastructure.Repositories
         Task DeleteOneAsync(T entity);
         Task DeleteMany(params Guid[] ids);
         Task DeleteManyAsync(params Guid[] ids);
-        Task SaveChangeAsync();
     }
 }

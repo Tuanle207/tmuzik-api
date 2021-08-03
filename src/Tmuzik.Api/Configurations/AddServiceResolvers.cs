@@ -17,7 +17,7 @@ namespace Tmuzik.Api.Configurations
             
             var assemblies = AppDomain.CurrentDomain
                 .GetAssemblies()
-                .Where(x => x.FullName.Contains("Tmuzik"))
+                .Where(x => x.FullName.StartsWith("Tmuzik"))
                 .Where(x => !x.FullName.Contains(".Tests"))
                 .Where(x => !x.FullName.Contains(".Test"))
                 .ToArray();
@@ -25,7 +25,7 @@ namespace Tmuzik.Api.Configurations
             AddServiced(services, assemblies);
         }
 
-        public static void RegistersApplicationServices(this IServiceCollection services)
+        public static void AddApplicationServices(this IServiceCollection services)
         {
             services.Scan(
                 scan => scan.FromAssemblies(typeof(DummyDto).Assembly)
@@ -35,7 +35,7 @@ namespace Tmuzik.Api.Configurations
             );
         }
 
-        public static void RegistersDataRepositories(this IServiceCollection services)
+        public static void AddDataRepositories(this IServiceCollection services)
         {
             services.Scan(
                 scan => scan.FromAssemblies(typeof(DummyDto).Assembly)
