@@ -2,9 +2,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Tmuzik.Application.Services;
-using Tmuzik.Infrastructure.Consts;
-using Tmuzik.Infrastructure.Services.Authorization;
+using Tmuzik.Common.Consts;
+using Tmuzik.Core.Interfaces.Helpers;
+using Tmuzik.Core.Interfaces.Services;
 
 namespace Tmuzik.Api.Middlewares
 {
@@ -17,7 +17,7 @@ namespace Tmuzik.Api.Middlewares
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context, IUserService userService, AuthHelper authHelper)
+        public async Task Invoke(HttpContext context, IUserService userService, IAuthHelper authHelper)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (token != null)
@@ -29,18 +29,18 @@ namespace Tmuzik.Api.Middlewares
         }
 
         private async Task AttachUserToContext(HttpContext context, IUserService userService,
-            AuthHelper authHelper, string token)
+            IAuthHelper authHelper, string token)
         {
             var userId = authHelper.ValidateToken(token);
 
             if (userId != null)
             {
                 // attach user to context on successful jwt validation
-                context.Items[AuthConst.HttpContextAuthItemName] = await userService.GetUserById(userId.Value);
+                // context.Items[AuthConst.HttpContextUserItemName] = await userService.GetUserByIdAsync(userId.Value);
             }
             else
             {
-                context.Items[AuthConst.HttpContextAuthItemName] = null;
+                context.Items[AuthConst.HttpContextUserItemName] = null;
             }
         }
     }

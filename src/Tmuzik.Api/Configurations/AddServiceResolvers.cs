@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Tmuzik.Infrastructure.DependencyInjections;
-using Tmuzik.Infrastructure.Repositories;
-using Tmuzik.Infrastructure.Services;
-using Tmuzik.Services.Dto;
+using Tmuzik.Common.DependencyInjections;
+using Tmuzik.Core;
+using Tmuzik.Core.Interfaces;
+using Tmuzik.Infrastructure.Data;
 
 namespace Tmuzik.Api.Configurations
 {
@@ -29,7 +29,7 @@ namespace Tmuzik.Api.Configurations
         {
             services.Scan(
                 scan => scan.FromAssemblies(typeof(DummyDto).Assembly)
-                    .AddClasses(classes => classes.AssignableTo<IService>())
+                    .AddClasses(classes => classes.AssignableTo<IAppService>())
                     .AsImplementedInterfaces()
                     .WithScopedLifetime()
             );
@@ -37,9 +37,10 @@ namespace Tmuzik.Api.Configurations
 
         public static void AddDataRepositories(this IServiceCollection services)
         {
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.Scan(
                 scan => scan.FromAssemblies(typeof(DummyDto).Assembly)
-                    .AddClasses(classes => classes.AssignableTo(typeof(IRepository<>)))
+                    .AddClasses(classes => classes.AssignableTo(typeof(IAsyncRepository<>)))
                     .AsImplementedInterfaces()
                     .WithScopedLifetime()
             );

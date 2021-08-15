@@ -10,8 +10,8 @@ using Tmuzik.Api.Configurations;
 using Tmuzik.Api.Filters;
 using Tmuzik.Api.Middlewares;
 using Tmuzik.Api.SignalR;
-using Tmuzik.Data;
-using Tmuzik.Services.Dto;
+using Tmuzik.Core;
+using Tmuzik.Infrastructure.Data;
 
 namespace Tmuzik.Api
 {
@@ -42,7 +42,7 @@ namespace Tmuzik.Api
                 .AddControllers(options =>
                 {
                     options.Filters.Add<ExceptionFilter>();
-                    options.Filters.Add<ResultFilter>();
+                    // options.Filters.Add<ResultFilter>();
                 }).AddFluentValidation(options =>
                 {
                     options.RegisterValidatorsFromAssemblyContaining<DummyDto>();
@@ -61,6 +61,8 @@ namespace Tmuzik.Api
             services.AddApplicationServices();
 
             services.AddDataRepositories();
+
+            services.AddHttpClient();
 
             services.AddSwaggerGen(c =>
             {
@@ -83,7 +85,11 @@ namespace Tmuzik.Api
 
             // app.UseHttpsRedirection();
 
-            app.UseCors(DefaultPolicy);
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
 
             app.UseRouting();
 

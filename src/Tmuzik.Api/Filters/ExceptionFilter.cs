@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
-using Tmuzik.Infrastructure.Models;
+using Tmuzik.Common.Models;
+using Tmuzik.Core.Exceptions;
 
 namespace Tmuzik.Api.Filters
 {

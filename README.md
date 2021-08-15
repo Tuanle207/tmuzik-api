@@ -34,7 +34,7 @@ Edit **connection string** in **app setting files** with your own one in **Tmuzi
 git clone https://github.com/Tuanle207/tmuzik-api
 cd tmuzik-api/src/Tmuzik.Api
 dotnet restore
-dotnet ef database update -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj
+dotnet ef database update -c AppDbContext -p ../Tmuzik.Infrastructure/Tmuzik.Infrastructure.csproj
 ```
 Then start the server:
 ```sh
@@ -61,22 +61,22 @@ dotnet run
 
 To run add-migration command (**from Tmuzik.Api working directory**):
 ```sh
-dotnet ef migrations add <MIGRATION_NAME> -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../Tmuzik.Data/Migrations
+dotnet ef migrations add <MIGRATION_NAME> -c AppDbContext -p ../Tmuzik.Infrastructure/Tmuzik.Infrastructure.csproj -o ../Tmuzik.Infrastructure/Data/Migrations
 ```
 
 To run remove-migration command:
 ```sh
-dotnet ef migrations remove -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../Tmuzik.Data/Migrations
+dotnet ef migrations remove -c AppDbContext -p ../Tmuzik.Infrastructure/Tmuzik.Infrastructure.csproj -o ../Tmuzik.Infrastructure/Data/Migrations
 ```
 
 To run update-database command:
 ```sh
-dotnet ef database update -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj
+dotnet ef database update -c AppDbContext -p ../Tmuzik.Infrastructure/Tmuzik.Infrastructure.csproj
 ```
 
 To run drop-database command:
 ```sh
-dotnet ef database drop -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj
+dotnet ef database drop -c AppDbContext -p ../Tmuzik.Infrastructure/Tmuzik.Infrastructure.csproj
 ```
 
 #### Building for source
@@ -93,7 +93,7 @@ To generate SQL scripts for release:
 ```sh
 git clone https://github.com/Tuanle207/tmuzik-api
 cd tmuzik-api/src/Tmuzik.Api
-dotnet ef migrations script -i -c AppDbContext -p ../Tmuzik.Data/Tmuzik.Data.csproj -o ../../dist/migrations_script.sql
+dotnet ef migrations script -i -c AppDbContext -p ../Tmuzik.Infrastructure/Tmuzik.Infrastructure.csproj -o ../../dist/migrations_script.sql
 ```
 ## Author
 

@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Tmuzik.Application.Services;
-using Tmuzik.Infrastructure.Services.Authorization;
+using Tmuzik.Core.Interfaces.Services;
 using Tmuzik.Services;
 
 
@@ -30,14 +27,7 @@ namespace Tmuzik.Api.Controllers
             _logger = logger;
             _userService = userService;
         }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> TestApi()
-        {
-            await _userService.UserExists("let");
-            return Ok(await _testService.TestApi());
-        }
+       
         [HttpGet("stream")]
         public async Task<IActionResult> StreamMusic(CancellationToken cancellationToken)
         {

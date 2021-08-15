@@ -1,10 +1,8 @@
-using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Tmuzik.Application.Dto.Requests;
-using Tmuzik.Application.Services;
+using Tmuzik.Core.Contract.Requests;
+using Tmuzik.Core.Interfaces.Services;
 
 namespace Tmuzik.Api.Controllers
 {
@@ -24,20 +22,36 @@ namespace Tmuzik.Api.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> Signup(SignupRequest input)
         {
-            var result = await _userService.Signup(input);
+            var result = await _userService.SignupAsync(input);
             return Ok(result);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest input)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogInformation("invalid");
-                _logger.LogInformation(JsonSerializer.Serialize(ModelState.Values));
-            }
-            var result = await _userService.Login(input);
+            var result = await _userService.LoginAsync(input);
             return Ok(result);
+        }
+
+        [HttpPost("loginWithFacebook")]
+        public async Task<IActionResult> LoginWithFacebook(LoginWithFacebookRequest input)
+        {
+            var result = await _userService.LoginWithFacebookAsync(input);
+            return Ok(result);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshLoginSession(RefreshLoginRequest input)
+        {
+            var result = await _userService.RefreshLoginSessionAsync(input);
+            return Ok(result); 
+        }
+
+        [HttpPost("revoke")]
+        public async Task<IActionResult> RevokeLoginSession(RefreshLoginRequest input)
+        {
+            var result = await _userService.RefreshLoginSessionAsync(input);
+            return Ok(result); 
         }
     }
 }
