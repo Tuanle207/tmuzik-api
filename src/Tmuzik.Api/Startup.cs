@@ -25,7 +25,7 @@ namespace Tmuzik.Api
         }
 
         public IConfiguration Configuration { get; }
-
+    
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -43,6 +43,8 @@ namespace Tmuzik.Api
                 {
                     options.Filters.Add<ExceptionFilter>();
                     // options.Filters.Add<ResultFilter>();
+                }).AddJsonOptions(options => {
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                 }).AddFluentValidation(options =>
                 {
                     options.RegisterValidatorsFromAssemblyContaining<DummyDto>();

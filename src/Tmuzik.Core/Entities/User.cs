@@ -17,9 +17,17 @@ namespace Tmuzik.Core.Entities
         public DateTime LastUpdationTime { get; set; }
         public Guid LastUpdator { get; set; }
         public DateTime CreationTime { get; set; }
-        public Guid? CreatorId { get; set; }
+        public Guid CreatorId { get; set; }
 
         public UserProfile Profile { get; set; }
         public ICollection<UserLogin> UserLogins { get; set; }
+
+        public User()
+        {
+            CreationTime = LastUpdationTime = DateTime.UtcNow;
+            LastUpdator = default;
+            CreatorId = default;
+            Verified = false;
+        }
     }
 }

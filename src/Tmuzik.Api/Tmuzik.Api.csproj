@@ -16,8 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Tmuzik.Application\Tmuzik.Application.csproj" />
-        <ProjectReference Include="..\Tmuzik.Data\Tmuzik.Data.csproj" />
+        <ProjectReference Include="..\Tmuzik.Core\Tmuzik.Core.csproj" />
+        <ProjectReference Include="..\Tmuzik.Common\Tmuzik.Common.csproj" />
         <ProjectReference Include="..\Tmuzik.Infrastructure\Tmuzik.Infrastructure.csproj" />
 
     </ItemGroup>

@@ -17,18 +17,18 @@ namespace Tmuzik.Api.Middlewares
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context, IUserService userService, IAuthHelper authHelper)
+        public async Task Invoke(HttpContext context, IIdentityService identityService, IAuthHelper authHelper)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (token != null)
             {
-                await AttachUserToContext(context, userService, authHelper, token); 
+                await AttachUserToContext(context, identityService, authHelper, token); 
             }
 
             await _next(context);
         }
 
-        private async Task AttachUserToContext(HttpContext context, IUserService userService,
+        private async Task AttachUserToContext(HttpContext context, IIdentityService identityService,
             IAuthHelper authHelper, string token)
         {
             var userId = authHelper.ValidateToken(token);
@@ -36,7 +36,7 @@ namespace Tmuzik.Api.Middlewares
             if (userId != null)
             {
                 // attach user to context on successful jwt validation
-                // context.Items[AuthConst.HttpContextUserItemName] = await userService.GetUserByIdAsync(userId.Value);
+                context.Items[AuthConst.HttpContextUserItemName] = await identityService.GetUserForApplicationAuthAsync(userId.Value);
             }
             else
             {

@@ -10,5 +10,7 @@ namespace Tmuzik.Core.Entities
         public string Avatar { get; set; }
         public string Cover { get; set; }
         public Guid UserId { get; set; }
+        public bool IsPremium { get; set; }
+        public bool IsArtist { get; set; }
     }
 }

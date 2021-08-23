@@ -31,7 +31,7 @@ namespace Tmuzik.Infrastructure.Authorization
             {
                 expiresIn = 5;
             }
-            return DateTime.Now.AddMinutes(expiresIn);
+            return DateTime.UtcNow.AddMinutes(expiresIn);
         }
 
         /// <summary>
@@ -84,21 +84,21 @@ namespace Tmuzik.Infrastructure.Authorization
                 expiresIn = 5;
             }
             var issuer = _configuration["Jwt:Issuer"];
+            var issueAt = DateTime.UtcNow;
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
 
             var tokenDescription = new SecurityTokenDescriptor
-
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", id) }),
-                Expires = DateTime.Now.AddMinutes(expiresIn),
+                Expires = issueAt.AddMinutes(expiresIn),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha512
                 ),
                 Issuer = issuer,
-                IssuedAt = DateTime.Now
+                IssuedAt = issueAt
             };
 
             var token = tokenHandler.CreateToken(tokenDescription);

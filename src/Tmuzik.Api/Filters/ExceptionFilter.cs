@@ -86,7 +86,7 @@ namespace Tmuzik.Api.Filters
 
             context.Result = new ObjectResult(details)
             {
-                StatusCode = StatusCodes.Status400BadRequest
+                StatusCode = coreException.StatusCode
             };
 
             context.ExceptionHandled = true;

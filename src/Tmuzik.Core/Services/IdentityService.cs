@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Requests;
 using Tmuzik.Core.Contract.Responses;
 using Tmuzik.Core.Entities;
@@ -13,15 +14,14 @@ using Tmuzik.Core.Specifications.Identities;
 
 namespace Tmuzik.Core.Services
 {
-    public class UserService : AppService, IUserService
+    public class IdentityService : AppService, IIdentityService
     {
         private readonly IAuthHelper _authHelper;
-        private readonly ILogger<UserService> _logger;
+        private readonly ILogger<IdentityService> _logger;
         private readonly IFbAuthService _fbAuthService;
 
-        public UserService(IServiceProvider serviceProvider, ILogger<UserService> logger, 
-            IAuthHelper authHelper,
-            IFbAuthService fbAuthService)
+        public IdentityService(IServiceProvider serviceProvider, ILogger<IdentityService> logger, 
+            IAuthHelper authHelper, IFbAuthService fbAuthService)
         : base(serviceProvider)    
         {
             _logger = logger;
@@ -56,30 +56,6 @@ namespace Tmuzik.Core.Services
             return result;
         }
 
-        public async Task<RefreshLoginResponse> RefreshLoginSessionAsync(RefreshLoginRequest input, CancellationToken cancellationToken)
-        {
-            var userLoginSpec = new UserLoginFilterSpecification(input.RefreshToken, input.UserId);
-
-            var userLogin = await UnitOfWork.UserLogins.FirstOrDefaultAsync(userLoginSpec, cancellationToken);
-
-            if (userLogin == null)
-            {
-                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
-            }
-
-            if (userLogin.ExpiryTime > DateTime.Now)
-            {
-                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
-            }
-
-            var res = new RefreshLoginResponse
-            {
-                AccessTokenExpiresAt = _authHelper.GetAccessTokenExpiryTime(),
-                AccessToken = _authHelper.GenerateAccessToken(userLogin.UserId.ToString())
-            };
-
-            return res;
-        }
 
         public async Task<LoginResponse> LoginWithFacebookAsync(LoginWithFacebookRequest input, CancellationToken cancellationToken = default)
         {
@@ -164,9 +140,55 @@ namespace Tmuzik.Core.Services
             };
         }
 
+        public async Task<RefreshLoginResponse> RefreshLoginSessionAsync(RefreshLoginRequest input, CancellationToken cancellationToken)
+        {
+            var userLoginSpec = new UserLoginFilterSpecification(input.RefreshToken, input.UserId);
+
+            var userLogin = await UnitOfWork.UserLogins.FirstOrDefaultAsync(userLoginSpec, cancellationToken);
+
+            if (userLogin == null)
+            {
+                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
+            }
+
+            if (userLogin.ExpiryTime <= DateTime.Now)
+            {
+                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
+            }
+
+            var res = new RefreshLoginResponse
+            {
+                AccessTokenExpiresAt = _authHelper.GetAccessTokenExpiryTime(),
+                AccessToken = _authHelper.GenerateAccessToken(userLogin.UserId.ToString())
+            };
+
+            return res;
+        }
+
+        public async Task RevokeLoginSessionAsync(RevokeLoginRequest input, CancellationToken cancellationToken = default)
+        {
+            var userLoginSpec = new UserLoginFilterSpecification(input.RefreshToken, input.UserId);
+
+            var userLogin = await UnitOfWork.UserLogins.FirstOrDefaultAsync(userLoginSpec, cancellationToken);
+
+            await UnitOfWork.UserLogins.DeleteAsync(userLogin);
+        }
+
+        public async Task<AuthUser> GetUserForApplicationAuthAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var userSpec = new UserWithProfileSpecification(id);
+
+            var user = await UnitOfWork.Users
+                .FirstOrDefaultAsync(userSpec, x => Mapper.Map<AuthUser>(x));
+
+            return user;
+        }
+
+
         private async Task<LoginResponseToken> GrantLoginToken(Guid userId)
         {
             var refreshToken = _authHelper.GenerateRefreshToken();
+
             await UnitOfWork.UserLogins.AddAsync(new UserLogin
             {
                 ExpiryTime = DateTime.Now.AddYears(1),

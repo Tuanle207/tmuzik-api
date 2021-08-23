@@ -4,11 +4,11 @@ using Tmuzik.Core.Entities;
 
 namespace Tmuzik.Infrastructure.Data.Configs
 {
-    public class AlbumItemConfiguration : IEntityTypeConfiguration<AlbumItem>
+    public class AudioSnapshotConfiguration : IEntityTypeConfiguration<AudioSnapshot>
     {
-        public void Configure(EntityTypeBuilder<AlbumItem> builder)
+        public void Configure(EntityTypeBuilder<AudioSnapshot> builder)
         {
-            builder.ToTable($"{DbConst.DbPrefix}{nameof(AlbumItem)}", DbConst.TMusicSchema);
+            builder.ToTable($"{DbConst.DbPrefix}{nameof(AudioSnapshot)}", DbConst.TMusicSchema);
 
             builder.HasOne(b => b.Audio)
                 .WithMany()

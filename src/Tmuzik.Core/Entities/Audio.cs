@@ -7,22 +7,30 @@ namespace Tmuzik.Core.Entities
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Source { get; set; }
         public int Length { get; set; }
-        public Guid Category { get; set; }
-        public AudioGenere AudioGenere { get; set; }
+        public AudioGenre Genre { get; set; }
         public int Plays { get; set; }
-        public string AccessLevel { get; set; }
+        public int Loves { get; set; }
+        public string Privacy { get; set; }
+        public bool FromArtist { get; set; }
         public DateTime CreationTime { get; set; }
-        public Guid? CreatorId { get; set; }
-        public Guid ArtistId { get; set; }
+        public Guid CreatorId { get; set; }
+        public string Artists { get; set; }
+        public Guid? ArtistId { get; set; }
 
 
         public Artist Artist { get; set; }
-        public User UploadedBy { get; set; }
+        public UserProfile UploadedBy { get; set; }
+
+        public Audio()
+        {
+            FromArtist = false;
+            ArtistId = null;
+            CreationTime = DateTime.UtcNow;
+        }
     }
 
-    public class AudioGenere 
+    public class AudioGenre 
     {
         public string[] Items { get; set; }
     }

@@ -16,16 +16,16 @@ namespace Tmuzik.Api.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IIdentityService _identityService;
         private readonly ITestService _testService;
         private readonly ILogger<TestController> _logger;
 
         public TestController(ITestService testService,
-            IUserService userService, ILogger<TestController> logger)
+            IIdentityService identityService, ILogger<TestController> logger)
         {
             _testService = testService;
             _logger = logger;
-            _userService = userService;
+            _identityService = identityService;
         }
        
         [HttpGet("stream")]

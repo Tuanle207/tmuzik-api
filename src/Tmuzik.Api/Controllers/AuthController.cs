@@ -10,48 +10,48 @@ namespace Tmuzik.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IIdentityService _identityService;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IUserService userService, ILogger<AuthController> logger)
+        public AuthController(IIdentityService identityService, ILogger<AuthController> logger)
         {
-            _userService = userService;
+            _identityService = identityService;
             _logger = logger;
         }
 
         [HttpPost("signup")]
         public async Task<IActionResult> Signup(SignupRequest input)
         {
-            var result = await _userService.SignupAsync(input);
+            var result = await _identityService.SignupAsync(input);
             return Ok(result);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest input)
         {
-            var result = await _userService.LoginAsync(input);
+            var result = await _identityService.LoginAsync(input);
             return Ok(result);
         }
 
         [HttpPost("loginWithFacebook")]
         public async Task<IActionResult> LoginWithFacebook(LoginWithFacebookRequest input)
         {
-            var result = await _userService.LoginWithFacebookAsync(input);
+            var result = await _identityService.LoginWithFacebookAsync(input);
             return Ok(result);
         }
 
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshLoginSession(RefreshLoginRequest input)
         {
-            var result = await _userService.RefreshLoginSessionAsync(input);
+            var result = await _identityService.RefreshLoginSessionAsync(input);
             return Ok(result); 
         }
 
         [HttpPost("revoke")]
-        public async Task<IActionResult> RevokeLoginSession(RefreshLoginRequest input)
+        public async Task<IActionResult> RevokeLoginSession(RevokeLoginRequest input)
         {
-            var result = await _userService.RefreshLoginSessionAsync(input);
-            return Ok(result); 
+            await _identityService.RevokeLoginSessionAsync(input);
+            return NoContent(); 
         }
     }
 }

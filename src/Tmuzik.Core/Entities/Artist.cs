@@ -18,9 +18,9 @@ namespace Tmuzik.Core.Entities
         public int Plays { get; set; }
         public int Follows { get; set; }
         public DateTime CreationTime { get; set; }
-        public Guid? CreatorId { get; set; }
+        public Guid CreatorId { get; set; }
 
-        public User BelongsTo { get; set; }
+        public UserProfile BelongsTo { get; set; }
 
         public Artist()
         {

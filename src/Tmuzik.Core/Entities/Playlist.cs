@@ -4,7 +4,7 @@ using Tmuzik.Common.Models;
 
 namespace Tmuzik.Core.Entities
 {
-    public class Album : Entity, IHaveDescription, IHaveCreationAudit
+    public class Playlist : Entity, IHaveDescription, IHaveCreationAudit
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -12,11 +12,9 @@ namespace Tmuzik.Core.Entities
         public string Privacy { get; set; }
         public DateTime CreationTime { get; set; }
         public Guid CreatorId { get; set; }
-        public Guid ArtistId { get; set; }
 
 
-        public Artist Artist { get; set; }
         public UserProfile Creator { get; set; }
-        public ICollection<AlbumItem> Items { get; set; }
+        public ICollection<PlaylistItem> Items { get; set; }
     }
 }
