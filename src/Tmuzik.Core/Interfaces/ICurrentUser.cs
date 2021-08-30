@@ -1,4 +1,5 @@
 using System;
+using Tmuzik.Core.Contract.Models;
 
 namespace Tmuzik.Core.Interfaces
 {
@@ -6,8 +7,10 @@ namespace Tmuzik.Core.Interfaces
     {
         bool IsAuthenticated { get; }
         Guid? Id { get; }
+        Guid? ProfileId { get; }
         string Email { get; }
-        string FullName { get; }
-        string Test { get; }
+        bool? Verified { get; }
+        DateTime? CreationTime { get; }
+        AuthUserProfile Profile { get; }
     }
 }

@@ -20,7 +20,7 @@ namespace Tmuzik.Api.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> Signup(SignupRequest input)
+        public async Task<IActionResult> Signup([FromBody] SignupRequest input)
         {
             var result = await _identityService.SignupAsync(input);
             return Ok(result);
@@ -34,21 +34,21 @@ namespace Tmuzik.Api.Controllers
         }
 
         [HttpPost("loginWithFacebook")]
-        public async Task<IActionResult> LoginWithFacebook(LoginWithFacebookRequest input)
+        public async Task<IActionResult> LoginWithFacebook([FromBody] LoginWithFacebookRequest input)
         {
             var result = await _identityService.LoginWithFacebookAsync(input);
             return Ok(result);
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshLoginSession(RefreshLoginRequest input)
+        public async Task<IActionResult> RefreshLoginSession([FromBody] RefreshLoginRequest input)
         {
             var result = await _identityService.RefreshLoginSessionAsync(input);
             return Ok(result); 
         }
 
         [HttpPost("revoke")]
-        public async Task<IActionResult> RevokeLoginSession(RevokeLoginRequest input)
+        public async Task<IActionResult> RevokeLoginSession([FromBody] RevokeLoginRequest input)
         {
             await _identityService.RevokeLoginSessionAsync(input);
             return NoContent(); 

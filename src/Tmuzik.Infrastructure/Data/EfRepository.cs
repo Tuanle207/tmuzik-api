@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
@@ -43,6 +44,12 @@ namespace Tmuzik.Infrastructure.Data
             return await specificationResult.CountAsync(cancellationToken);
         }
 
+        public async Task<int> CountAllAsync(CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Set<T>().CountAsync(cancellationToken);
+        }
+
+
         public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _dbContext.Set<T>().AddAsync(entity);
@@ -75,32 +82,38 @@ namespace Tmuzik.Infrastructure.Data
             return await specificationResult.FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TResult>> ListAllAsync<TResult>(Func<T, TResult> projection, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<TResult>> ListAllAsync<TResult>(Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>()
-                .AsQueryable()
+                .Where(x => true)
                 .Select(projection)
-                .AsQueryable()
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TResult>> ListAsync<TResult>(ISpecification<T> spec, Func<T, TResult> projection, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<TResult>> ListAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
         {
             var specificationResult = ApplySpecification(spec, projection);
             return await specificationResult.ToListAsync(cancellationToken);
         }
 
-        public async Task<TResult> FirstAsync<TResult>(ISpecification<T> spec, Func<T, TResult> projection, CancellationToken cancellationToken = default)
+        public async Task<TResult> FirstAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
         {
             var specificationResult = ApplySpecification(spec, projection);
             return await specificationResult.FirstAsync(cancellationToken);
         }
 
-        public async Task<TResult> FirstOrDefaultAsync<TResult>(ISpecification<T> spec, Func<T, TResult> projection, CancellationToken cancellationToken = default)
+        public async Task<TResult> FirstOrDefaultAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
         {
             var specificationResult = ApplySpecification(spec, projection);
             return await specificationResult.FirstOrDefaultAsync(cancellationToken);
         }
+
+        public Expression<Func<T, TResult>> CreateSelector<TResult>(Expression<Func<T, TResult>> projection)
+        {
+            return projection;
+        }
+
+        
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
@@ -108,10 +121,10 @@ namespace Tmuzik.Infrastructure.Data
             return specificationEvaluator.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
         }
 
-        private IQueryable<TResult> ApplySpecification<TResult>(ISpecification<T> spec, Func<T, TResult> projection)
+        private IQueryable<TResult> ApplySpecification<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection)
         {
             var query = ApplySpecification(spec);
-            return query.Select(projection).AsQueryable();
+            return query.Select(projection);
         }
     }
 }

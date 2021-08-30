@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Tmuzik.Core.Entities;
@@ -10,9 +11,10 @@ using Tmuzik.Infrastructure.Data;
 namespace Tmuzik.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210824043906_Update_Audio_Table")]
+    partial class Update_Audio_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,12 +185,6 @@ namespace Tmuzik.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AlbumId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AlbumTag")
-                        .HasColumnType("text");
-
                     b.Property<Guid?>("ArtistId")
                         .HasColumnType("uuid");
 
@@ -213,8 +209,8 @@ namespace Tmuzik.Infrastructure.Data.Migrations
                     b.Property<bool>("FromArtist")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Genre")
-                        .HasColumnType("text");
+                    b.Property<AudioGenre>("Genre")
+                        .HasColumnType("jsonb");
 
                     b.Property<int>("Length")
                         .HasColumnType("integer");
@@ -232,8 +228,6 @@ namespace Tmuzik.Infrastructure.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AlbumId");
 
                     b.HasIndex("ArtistId");
 
@@ -632,10 +626,6 @@ namespace Tmuzik.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Tmuzik.Core.Entities.Audio", b =>
                 {
-                    b.HasOne("Tmuzik.Core.Entities.Album", "Album")
-                        .WithMany()
-                        .HasForeignKey("AlbumId");
-
                     b.HasOne("Tmuzik.Core.Entities.Artist", "Artist")
                         .WithMany()
                         .HasForeignKey("ArtistId");
@@ -645,8 +635,6 @@ namespace Tmuzik.Infrastructure.Data.Migrations
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Album");
 
                     b.Navigation("Artist");
 

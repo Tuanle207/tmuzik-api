@@ -1,11 +1,12 @@
 using System;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Tmuzik.Core.Interfaces;
 
 namespace Tmuzik.Core.Services
 {
-    public class AppService : IAppService
+    public abstract class AppService : IAppService
     {
         private IMapper _mapper;
         private IUnitOfWork _unitOfWork;

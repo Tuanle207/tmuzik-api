@@ -1,4 +1,5 @@
 
+using AutoMapper;
 using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Requests;
 using Tmuzik.Core.Contract.Responses;
@@ -6,29 +7,55 @@ using Tmuzik.Core.Entities;
 
 namespace Tmuzik.Core.ObjectMapper
 {
-    public class UserMapper : AutoMapper.Profile
+    public class UserMapper : Profile
     {
         public UserMapper()
         {
             CreateMap<User, AuthUser>()
-                .ConstructUsing(src => new AuthUser
-                {
-                    Id = src.Id,
-                    Email = src.Email,
-                    Avatar = src.Profile.Avatar,
-                    Dob = src.Profile.Dob,
-                    FullName = src.Profile.FullName
-                });
+                .ConvertUsing(src => MapUserToAuthUser(src));
                     
             CreateMap<User, LoginResponseData>()
-                .ConstructUsing(src => new LoginResponseData
+                .ConvertUsing(src => MapUserToLoginResponseData(src));
+        }
+
+        private AuthUser MapUserToAuthUser(User src)
+        {
+            var result = new AuthUser
+            {
+                Id = src.Id,
+                Email = src.Email,
+                CreationTime = src.CreationTime,
+                Verified = src.Verified,
+                Profile = new AuthUserProfile
                 {
-                    Id = src.Id,
-                    Email = src.Email,
-                    Avatar = src.Profile.Avatar,
+                    Id = src.Profile.Id,
+                    FullName = src.Profile.FullName,
                     Dob = src.Profile.Dob,
-                    FullName = src.Profile.FullName
-                });
+                    Avatar = src.Profile.Avatar,
+                    Cover = src.Profile.Cover,
+                    IsArtist = src.Profile.IsArtist,
+                    IsPremium = src.Profile.IsPremium
+                }
+            };
+            return result;
+        }
+
+        private LoginResponseData MapUserToLoginResponseData(User src)
+        {
+            var result = new LoginResponseData
+            {
+                Id = src.Id,
+                Email = src.Email,
+                Verified = src.Verified,
+                CreationTime = src.CreationTime,
+                FullName = src.Profile.FullName,
+                Dob = src.Profile.Dob,
+                Avatar = src.Profile.Avatar,
+                Cover = src.Profile.Cover,
+                IsPremium = src.Profile.IsPremium,
+                IsArtist = src.Profile.IsArtist
+            };
+            return result;
         }
     }
 }

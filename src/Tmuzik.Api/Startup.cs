@@ -1,9 +1,15 @@
+using System.IO;
+using System.Linq;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Tmuzik.Api.Configurations;
@@ -37,6 +43,17 @@ namespace Tmuzik.Api
                     .AllowAnyHeader()
                     .AllowCredentials();
             }));
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = int.MaxValue; // if don't set default value is: 30 MB
+            });
+
+            services.Configure<FormOptions>(options =>
+            {
+                // Set the limit to 100 MB
+                options.MultipartBodyLengthLimit = 104857600;
+            });
 
             services
                 .AddControllers(options =>
@@ -96,6 +113,21 @@ namespace Tmuzik.Api
             app.UseRouting();
 
             app.UseJwtAuthentication();
+
+            app.UseAuthorization();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "Storage")),
+                RequestPath = "/storage",
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Append(
+                        "Cache-Control", $"public, max-age=604800");
+                },
+                ContentTypeProvider = FileExtensionContentTypeProviderBuilder.Build()
+            });
 
             app.UseEndpoints(endpoints =>
             {

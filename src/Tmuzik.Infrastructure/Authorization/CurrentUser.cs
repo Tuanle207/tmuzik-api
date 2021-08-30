@@ -11,28 +11,22 @@ namespace Tmuzik.Infrastructure.Authorization
     public class CurrentUser : ICurrentUser, IScopedDependency<ICurrentUser> 
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<CurrentUser> _logger;
-
-
+        
         private AuthUser _authUser => _httpContextAccessor.HttpContext?
             .Items[AuthConst.HttpContextUserItemName] as AuthUser;
 
 
-        public CurrentUser(IHttpContextAccessor httpContextAccessor, ILogger<CurrentUser> logger)
+        public CurrentUser(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
 
         public bool IsAuthenticated => _authUser is not null;
         public Guid? Id => _authUser is null ? null : _authUser.Id;
+        public Guid? ProfileId => _authUser is null ? null : _authUser.Profile.Id;
         public string Email => _authUser is null ? null : _authUser.Email;
-        public string FullName => _authUser is null ? null : _authUser.FullName;
-        public string Test
-        {
-            get
-            {
-                return _authUser is null ? null : _authUser.Email;
-            }
-        }
+        public bool? Verified => _authUser is null ? null : _authUser.Verified;
+        public DateTime? CreationTime => _authUser is null ? null : _authUser.CreationTime;
+        public AuthUserProfile Profile => _authUser is null ? null : _authUser.Profile;
     }
 }

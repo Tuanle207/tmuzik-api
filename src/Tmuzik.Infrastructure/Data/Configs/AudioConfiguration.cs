@@ -10,9 +10,6 @@ namespace Tmuzik.Infrastructure.Data.Configs
         {
             builder.ToTable($"{DbConst.DbPrefix}{nameof(Audio)}", DbConst.TMusicSchema);
 
-            builder.Property(b => b.Genre)
-                .HasColumnType("jsonb");
-
             builder.HasOne(b => b.Artist)
                 .WithMany()
                 .HasForeignKey(b => b.ArtistId);
