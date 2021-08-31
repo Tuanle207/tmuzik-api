@@ -14,7 +14,7 @@
 *.userprefs
 
 # Static folder
-src/Tmuzik.Api/Storage/*
+src/Tmuzik.Api/Storage
 !src/Tmuzik.Api/Storage/info.txt
 
 # Mono auto generated files

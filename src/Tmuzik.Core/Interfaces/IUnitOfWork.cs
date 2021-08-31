@@ -10,7 +10,9 @@ namespace Tmuzik.Core.Interfaces
         IAsyncRepository<UserLogin> UserLogins { get; }
         IAsyncRepository<Audio> Audios { get; }
         IAsyncRepository<Album> Albums { get; }
+        IAsyncRepository<AlbumItem> AlbumItems { get; }
         IAsyncRepository<Playlist> Playlists { get; }
+        IAsyncRepository<PlaylistItem> PlaylistItems { get; }
         Task CommitAsync();
     }
 }

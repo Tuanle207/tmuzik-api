@@ -19,7 +19,7 @@ namespace Tmuzik.Core.Entities
         public DateTime CreationTime { get; set; }
         public Guid CreatorId { get; set; }
         public string AlbumTag { get; set; }
-        public string Artists { get; set; }
+        public string ArtistTag { get; set; }
         public Guid? ArtistId { get; set; }
 
 
