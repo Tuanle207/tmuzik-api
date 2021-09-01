@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using Tmuzik.Common.Consts;
 using Tmuzik.Common.Models;
 
 namespace Tmuzik.Core.Entities
@@ -32,6 +33,7 @@ namespace Tmuzik.Core.Entities
             FromArtist = false;
             ArtistId = null;
             CreationTime = DateTime.UtcNow;
+            Privacy  = PrivacyLevel.Private;
         }
     }
 

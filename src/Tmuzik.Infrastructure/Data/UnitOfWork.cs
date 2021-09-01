@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Tmuzik.Common.DependencyInjections;
@@ -46,9 +47,9 @@ namespace Tmuzik.Infrastructure.Data
         public IAsyncRepository<PlaylistItem> PlaylistItems =>
             _playlistItems ?? (_playlistItems = _serviceProvider.GetRequiredService<IAsyncRepository<PlaylistItem>>());
 
-        public Task CommitAsync()
+        public Task CommitAsync(CancellationToken cancellationToken = default)
         {
-            return _dbContext.SaveChangesAsync();
+            return _dbContext.SaveChangesAsync(cancellationToken);
         }
         
         public void Dispose()

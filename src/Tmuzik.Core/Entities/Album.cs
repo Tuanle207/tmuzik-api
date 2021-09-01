@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Tmuzik.Common.Consts;
 using Tmuzik.Common.Models;
 
 namespace Tmuzik.Core.Entities
@@ -18,5 +19,11 @@ namespace Tmuzik.Core.Entities
         public Artist Artist { get; set; }
         public UserProfile Creator { get; set; }
         public ICollection<AlbumItem> Items { get; set; }
+
+        public Album()
+        {
+            CreationTime = DateTime.UtcNow;
+            Privacy = PrivacyLevel.Private;
+        }
     }
 }

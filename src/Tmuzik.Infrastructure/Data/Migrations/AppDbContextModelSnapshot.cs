@@ -192,7 +192,7 @@ namespace Tmuzik.Infrastructure.Data.Migrations
                     b.Property<Guid?>("ArtistId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Artists")
+                    b.Property<string>("ArtistTag")
                         .HasColumnType("text");
 
                     b.Property<string>("Cover")

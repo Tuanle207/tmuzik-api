@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Tmuzik.Core.Entities;
 
@@ -13,6 +14,6 @@ namespace Tmuzik.Core.Interfaces
         IAsyncRepository<AlbumItem> AlbumItems { get; }
         IAsyncRepository<Playlist> Playlists { get; }
         IAsyncRepository<PlaylistItem> PlaylistItems { get; }
-        Task CommitAsync();
+        Task CommitAsync(CancellationToken cancellationToken = default);
     }
 }

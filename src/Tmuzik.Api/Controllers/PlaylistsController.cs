@@ -21,49 +21,50 @@ namespace Tmuzik.Api.Controllers
         [HttpGet("uploaded")]
         public async Task<IActionResult> GetUserPlaylists(CancellationToken cancellationToken)
         {
-            var result = await _playlistService.GetUserPlaylists(cancellationToken);
+            var result = await _playlistService.GetUserPlaylistsAsync(cancellationToken);
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserPlaylistDetail([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            var result = await _playlistService.GetUserPlaylistDetail(id, cancellationToken);
+            var result = await _playlistService.GetUserPlaylistDetailAsync(id, cancellationToken);
             return Ok(result);
         }
-        
-        [HttpPost]
+
+        [HttpPost("")]
         public async Task<IActionResult> CreatePlaylist([FromForm] CreatePlaylistRequest input, CancellationToken cancellationToken)
         {
-            var result = await _playlistService.CreatePlaylist(input, cancellationToken);
+            var result = await _playlistService.CreatePlaylistAsync(input, cancellationToken);
             return Ok(result);
-        } 
+        }
 
-        [HttpPost("{id")]
-        public async Task<IActionResult> UpdatePlaylist([FromForm] UpdatePlaylistRequest input, CancellationToken cancellationToken)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> UpdatePlaylist([FromRoute] Guid id, [FromForm] UpdatePlaylistRequest input, CancellationToken cancellationToken)
         {
-            var result = await _playlistService.UpdatePlaylist(input, cancellationToken);
+            input.Id = id;
+            var result = await _playlistService.UpdatePlaylistAsync(input, cancellationToken);
             return Ok(result);
         } 
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemovePlaylist([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            await _playlistService.RemovePlaylist(id, cancellationToken);
+            await _playlistService.RemovePlaylistAsync(id, cancellationToken);
             return NoContent();
         } 
 
-        [HttpPost("{id}/items")]
-        public async Task<IActionResult> AddPlaylistItem([FromBody] AddPlaylistItemRequest input, CancellationToken cancellationToken)
+        [HttpPost("{id}/add-items")]
+        public async Task<IActionResult> AddPlaylistItem([FromRoute] Guid id, [FromBody] AddPlaylistItemRequest input, CancellationToken cancellationToken)
         {
-            await _playlistService.AddPlaylistItem(input, cancellationToken);
+            await _playlistService.AddPlaylistItemAsync(input, id, cancellationToken);
             return Ok();
         }
 
-        [HttpDelete("{id}/items")]
-        public async Task<IActionResult> RemovePlaylistItem([FromBody] RemovePlaylistItemRequest input, CancellationToken cancellationToken)
+        [HttpPost("{id}/remove-items")]
+        public async Task<IActionResult> RemovePlaylistItem([FromRoute] Guid id, [FromBody] RemovePlaylistItemRequest input, CancellationToken cancellationToken)
         {
-            await _playlistService.RemovePlaylistItem(input, cancellationToken);
+            await _playlistService.RemovePlaylistItemAsync(input, id, cancellationToken);
             return Ok();
         } 
     }

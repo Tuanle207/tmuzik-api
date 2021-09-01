@@ -74,7 +74,7 @@ namespace Tmuzik.Core.Services
                 user = new User
                 {
                     Email = userFbInfo.Email,
-                    CreationTime = DateTime.Now
+                    CreationTime = DateTime.UtcNow
                 };
 
                 var createdUser = await UnitOfWork.Users.AddAsync(user, cancellationToken);
@@ -118,7 +118,7 @@ namespace Tmuzik.Core.Services
 
             var user = new User
             {
-                CreationTime = DateTime.Now,
+                CreationTime = DateTime.UtcNow,
                 Email = input.Email,
                 Verified = false
             };
@@ -132,7 +132,7 @@ namespace Tmuzik.Core.Services
                 UserId = user.Id,
                 FullName = input.FullName,
                 Dob = input.Dob,
-            }, cancellationToken);
+            });
 
             return new SignupResponse
             {
@@ -171,21 +171,22 @@ namespace Tmuzik.Core.Services
 
             var userLogin = await UnitOfWork.UserLogins.FirstOrDefaultAsync(userLoginSpec, cancellationToken);
 
-            await UnitOfWork.UserLogins.DeleteAsync(userLogin);
+            await UnitOfWork.UserLogins.DeleteAsync(userLogin, cancellationToken);
         }
 
         public async Task<AuthUser> GetUserForApplicationAuthAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var userSpec = new UserWithProfileSpecification(id);
+            var userSelector = UnitOfWork.Users.CreateSelector(x => Mapper.Map<AuthUser>(x));
 
             var user = await UnitOfWork.Users
-                .FirstOrDefaultAsync(userSpec, x => Mapper.Map<AuthUser>(x));
+                .FirstOrDefaultAsync(userSpec, userSelector, cancellationToken);
 
             return user;
         }
 
 
-        private async Task<LoginResponseToken> GrantLoginToken(Guid userId)
+        private async Task<LoginResponseToken> GrantLoginToken(Guid userId, CancellationToken cancellationToken = default)
         {
             var refreshToken = _authHelper.GenerateRefreshToken();
 
@@ -194,7 +195,7 @@ namespace Tmuzik.Core.Services
                 ExpiryTime = DateTime.Now.AddYears(1),
                 RefreshToken = refreshToken,
                 UserId = userId
-            });
+            }, cancellationToken);
 
             return new LoginResponseToken
             {

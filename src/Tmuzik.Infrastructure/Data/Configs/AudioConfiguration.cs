@@ -14,6 +14,10 @@ namespace Tmuzik.Infrastructure.Data.Configs
                 .WithMany()
                 .HasForeignKey(b => b.ArtistId);
 
+            builder.HasOne(b => b.Album)
+                .WithMany()
+                .HasForeignKey(b => b.ArtistId);    
+
             builder.HasOne(b => b.UploadedBy)
                 .WithMany()
                 .HasForeignKey(b => b.CreatorId);

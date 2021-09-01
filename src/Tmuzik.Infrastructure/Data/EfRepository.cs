@@ -27,12 +27,12 @@ namespace Tmuzik.Infrastructure.Data
             return await _dbContext.Set<T>().FindAsync(keyValues, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken = default)
+        public async Task<ICollection<T>> ListAllAsync(CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>().ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
+        public async Task<ICollection<T>> ListAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
         {
             var specificationResult = ApplySpecification(spec);
             return await specificationResult.ToListAsync(cancellationToken);
@@ -58,6 +58,11 @@ namespace Tmuzik.Infrastructure.Data
             return entity;
         }
 
+        public void Add(T entity)
+        {
+            _dbContext.Set<T>().Add(entity);
+        }
+
         public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
@@ -68,6 +73,11 @@ namespace Tmuzik.Infrastructure.Data
         {
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public void Delete(T entity)
+        {
+            _dbContext.Set<T>().Remove(entity);
         }
 
         public async Task<T> FirstAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
@@ -82,35 +92,35 @@ namespace Tmuzik.Infrastructure.Data
             return await specificationResult.FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TResult>> ListAllAsync<TResult>(Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
+        public async Task<ICollection<TResult>> ListAllAsync<TResult>(Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>()
                 .Where(x => true)
-                .Select(projection)
+                .Select(selector)
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TResult>> ListAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
+        public async Task<ICollection<TResult>> ListAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default)
         {
-            var specificationResult = ApplySpecification(spec, projection);
+            var specificationResult = ApplySpecification(spec, selector);
             return await specificationResult.ToListAsync(cancellationToken);
         }
 
-        public async Task<TResult> FirstAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
+        public async Task<TResult> FirstAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default)
         {
-            var specificationResult = ApplySpecification(spec, projection);
+            var specificationResult = ApplySpecification(spec, selector);
             return await specificationResult.FirstAsync(cancellationToken);
         }
 
-        public async Task<TResult> FirstOrDefaultAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection, CancellationToken cancellationToken = default)
+        public async Task<TResult> FirstOrDefaultAsync<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default)
         {
-            var specificationResult = ApplySpecification(spec, projection);
+            var specificationResult = ApplySpecification(spec, selector);
             return await specificationResult.FirstOrDefaultAsync(cancellationToken);
         }
 
-        public Expression<Func<T, TResult>> CreateSelector<TResult>(Expression<Func<T, TResult>> projection)
+        public Expression<Func<T, TResult>> CreateSelector<TResult>(Expression<Func<T, TResult>> selector)
         {
-            return projection;
+            return selector;
         }
 
         
@@ -121,10 +131,10 @@ namespace Tmuzik.Infrastructure.Data
             return specificationEvaluator.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
         }
 
-        private IQueryable<TResult> ApplySpecification<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> projection)
+        private IQueryable<TResult> ApplySpecification<TResult>(ISpecification<T> spec, Expression<Func<T, TResult>> selector)
         {
             var query = ApplySpecification(spec);
-            return query.Select(projection);
+            return query.Select(selector);
         }
     }
 }

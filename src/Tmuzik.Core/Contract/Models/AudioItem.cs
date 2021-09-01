@@ -18,5 +18,7 @@ namespace Tmuzik.Core.Contract.Models
         public string File { get; set; }
         public DateTime CreationTime { get; set; }
         public Creator Creator { get; set; }
+        public int Plays { get; set; }
+        public int Loves { get; set; }
     }
 }
