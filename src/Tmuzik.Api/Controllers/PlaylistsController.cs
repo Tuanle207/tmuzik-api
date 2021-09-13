@@ -26,9 +26,9 @@ namespace Tmuzik.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserPlaylistDetail([FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPlaylistDetail([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            var result = await _playlistService.GetUserPlaylistDetailAsync(id, cancellationToken);
+            var result = await _playlistService.GetPlaylistDetailAsync(id, cancellationToken);
             return Ok(result);
         }
 
@@ -57,8 +57,8 @@ namespace Tmuzik.Api.Controllers
         [HttpPost("{id}/add-items")]
         public async Task<IActionResult> AddPlaylistItem([FromRoute] Guid id, [FromBody] AddPlaylistItemRequest input, CancellationToken cancellationToken)
         {
-            await _playlistService.AddPlaylistItemAsync(input, id, cancellationToken);
-            return Ok();
+            var result = await _playlistService.AddPlaylistItemAsync(input, id, cancellationToken);
+            return Ok(result);
         }
 
         [HttpPost("{id}/remove-items")]
@@ -66,6 +66,6 @@ namespace Tmuzik.Api.Controllers
         {
             await _playlistService.RemovePlaylistItemAsync(input, id, cancellationToken);
             return Ok();
-        } 
+        }
     }
 }

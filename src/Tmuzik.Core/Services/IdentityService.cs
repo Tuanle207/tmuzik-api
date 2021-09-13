@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Requests;
@@ -37,13 +39,13 @@ namespace Tmuzik.Core.Services
             var user = await UnitOfWork.Users.FirstOrDefaultAsync(userSpec, cancellationToken);
             if (user == default)
             {
-                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
+                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized);
             }
 
             var valid = _authHelper.VerifyPassword(input.Password, user.Password, user.Salt);  
             if (!valid)
             {
-                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
+                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized);
             }
 
             var result = new LoginResponse
@@ -61,7 +63,7 @@ namespace Tmuzik.Core.Services
         {
             var validatedTokenResult = await _fbAuthService.ValidateAccessTokenAsync(input.FbAccessToken);
             if (!validatedTokenResult.Data.IsValid) {
-                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
+                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized);
             }
 
             var userFbInfo = await _fbAuthService.GetUserInfoAsync(input.FbAccessToken);
@@ -110,10 +112,10 @@ namespace Tmuzik.Core.Services
 
         public async Task<SignupResponse> SignupAsync(SignupRequest input, CancellationToken cancellationToken = default)
         {
-
-            if (input.Password != input.PasswordConfirm)
+            var userSpec = new UserFilterSpecification(input.Email);
+            if (await UnitOfWork.Users.CountAsync(userSpec, cancellationToken) != 0)
             {
-                throw ExceptionBuilder.Exception(CoreExceptions.BadRequest, "Passwords did not match!");
+                throw ExceptionBuilder.Build(CoreExceptions.BadRequest, "This email has been used by another user!");
             }
 
             var user = new User
@@ -148,12 +150,12 @@ namespace Tmuzik.Core.Services
 
             if (userLogin == null)
             {
-                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
+                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized);
             }
 
             if (userLogin.ExpiryTime <= DateTime.Now)
             {
-                throw ExceptionBuilder.Exception(CoreExceptions.Unauthorized);
+                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized);
             }
 
             var res = new RefreshLoginResponse

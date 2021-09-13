@@ -16,6 +16,7 @@ namespace Tmuzik.Core.Contract.Responses
     public class LoginResponseData 
     {
         public Guid Id { get; set; }
+        public Guid ProfileId { get; set; }
         public string Email { get; set; }
         public bool Verified { get; set; }
         public DateTime CreationTime { get; set; }
@@ -26,5 +27,5 @@ namespace Tmuzik.Core.Contract.Responses
         public bool IsPremium { get; set; }
         public bool IsArtist { get; set; }
         
-    } 
+    }
 }

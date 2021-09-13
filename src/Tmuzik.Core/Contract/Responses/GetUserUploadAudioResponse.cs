@@ -4,7 +4,7 @@ using Tmuzik.Core.Contract.Models;
 
 namespace Tmuzik.Core.Contract.Responses
 {
-    public class GetUserUploadAudioResponse : PageModelResponse<UserUploadAudio>
+    public class GetUserUploadAudioResponse : PageModelResponse<AudioItem>
     {
         
     }

@@ -5,7 +5,7 @@ namespace Tmuzik.Core.Exceptions
     
     public class ExceptionBuilder
     {
-        public static CoreException Exception(CoreExceptions type = CoreExceptions.InternalError, string message = null)
+        public static CoreException Build(CoreExceptions type = CoreExceptions.InternalError, string message = null)
         {
             switch (type)
             {

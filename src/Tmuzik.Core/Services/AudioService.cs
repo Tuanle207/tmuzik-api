@@ -2,6 +2,7 @@ using System;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Requests;
 using Tmuzik.Core.Contract.Responses;
 using Tmuzik.Core.Entities;
@@ -21,7 +22,7 @@ namespace Tmuzik.Core.Services
             _storageHandler = storageHandler;
         }
 
-        public async Task<UploadAudioResponse> AddAudioAsync(UploadAudioRequest input, CancellationToken cancellationToken = default)
+        public async Task<AudioItem> AddAudioAsync(UploadAudioRequest input, CancellationToken cancellationToken = default)
         {
             var audio = Mapper.Map<Audio>(input);
             audio.CreatorId = CurrentUser.ProfileId.Value;
@@ -35,17 +36,19 @@ namespace Tmuzik.Core.Services
             var audioUrl = await _storageHandler.SaveFileAsync(input.AudioFile);
             audio.File = audioUrl;
 
-            audio = await UnitOfWork.Audios.AddAsync(audio, cancellationToken);
+            await UnitOfWork.Audios.AddAsync(audio, cancellationToken);
 
-            var result = Mapper.Map<UploadAudioResponse>(audio);
+            var audioSpec = new AudioIncludesFieldsSpecification(audio.Id);
+            var audioSelector = UnitOfWork.Audios.CreateSelector(x => Mapper.Map<AudioItem>(x));
+            var result = await UnitOfWork.Audios.FirstOrDefaultAsync(audioSpec, audioSelector);
             return result;
         }
 
         public async Task<GetUserUploadAudioResponse> GetUserUploadAudioAsync(GetUserUploadAudioRequest input, CancellationToken cancellationToken = default)
         {
             var userId = CurrentUser.ProfileId.Value;
-            var querySpec = new AudioWithPaginationSpecification(input, userId);
-            var selector = UnitOfWork.Audios.CreateSelector(x => Mapper.Map<UserUploadAudio>(x));
+            var querySpec = new AudioIncludesFieldsSpecification(input, userId);
+            var selector = UnitOfWork.Audios.CreateSelector(x => Mapper.Map<AudioItem>(x));
             
             var items = await UnitOfWork.Audios.ListAsync(querySpec, selector, cancellationToken);
             var totalCount = await UnitOfWork.Audios.CountAllAsync(cancellationToken);
