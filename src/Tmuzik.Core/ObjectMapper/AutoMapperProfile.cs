@@ -9,6 +9,7 @@ namespace Tmuzik.Core.ObjectMapper
             CreateUtilMaps();
             CreateAudioMaps();
             CreatePlaylistMaps();
+            CreateArtistMaps();
             CreateUserMaps();
         }
     }

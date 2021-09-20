@@ -17,6 +17,7 @@ namespace Tmuzik.Infrastructure.Data
         private IAsyncRepository<User> _users;
         private IAsyncRepository<UserProfile> _userProfiles;
         private IAsyncRepository<UserLogin> _userLogins;
+        private IAsyncRepository<Artist> _artists;
         private IAsyncRepository<Audio> _audios;
         private IAsyncRepository<Album> _albums;
         private IAsyncRepository<AlbumItem> _albumItems;
@@ -36,6 +37,8 @@ namespace Tmuzik.Infrastructure.Data
             _userProfiles ?? (_userProfiles = _serviceProvider.GetRequiredService<IAsyncRepository<UserProfile>>());
         public IAsyncRepository<UserLogin> UserLogins =>
             _userLogins ?? (_userLogins = _serviceProvider.GetRequiredService<IAsyncRepository<UserLogin>>());
+        public IAsyncRepository<Artist> Artists =>
+            _artists ?? (_artists = _serviceProvider.GetRequiredService<IAsyncRepository<Artist>>());
         public IAsyncRepository<Audio> Audios =>
             _audios ?? (_audios = _serviceProvider.GetRequiredService<IAsyncRepository<Audio>>());
         public IAsyncRepository<Album> Albums =>

@@ -39,13 +39,13 @@ namespace Tmuzik.Core.Services
             var user = await UnitOfWork.Users.FirstOrDefaultAsync(userSpec, cancellationToken);
             if (user == default)
             {
-                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized);
+                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized, "Invalid username or password");
             }
 
             var valid = _authHelper.VerifyPassword(input.Password, user.Password, user.Salt);  
             if (!valid)
             {
-                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized);
+                throw ExceptionBuilder.Build(CoreExceptions.Unauthorized, "Invalid username or password");
             }
 
             var result = new LoginResponse

@@ -27,11 +27,19 @@ namespace Tmuzik.Core.Entities
             Verified = false;
             Plays = 0;
             Follows = 0;
+            CreationTime = DateTime.UtcNow;
+            Photo = new ArtistPhotos();
+
         }
     }
 
     public class ArtistPhotos
     {
         public string[] Items { get; set; }
+
+        public ArtistPhotos()
+        {
+            Items = new string[]{ };
+        }
     }
 }

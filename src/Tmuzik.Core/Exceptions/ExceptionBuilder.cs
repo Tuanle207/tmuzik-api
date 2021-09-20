@@ -14,7 +14,7 @@ namespace Tmuzik.Core.Exceptions
                 case CoreExceptions.NotFound:
                     return NotFound(message);
                 case CoreExceptions.Unauthorized:
-                    return Unauthorized();
+                    return Unauthorized(message);
                 case CoreExceptions.Forbidden:
                     return Forbidden();
                 case CoreExceptions.InternalError:
@@ -34,9 +34,9 @@ namespace Tmuzik.Core.Exceptions
             return new CoreException(StatusCodes.Status404NotFound, message);
         }
 
-        private static CoreException Unauthorized()
+        private static CoreException Unauthorized(string message = "You are not authorized.")
         {
-            return new CoreException(StatusCodes.Status401Unauthorized, "You are not authorized.");
+            return new CoreException(StatusCodes.Status401Unauthorized, message);
         }
 
         private static CoreException Forbidden()

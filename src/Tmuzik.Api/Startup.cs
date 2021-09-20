@@ -52,7 +52,7 @@ namespace Tmuzik.Api
             services.Configure<FormOptions>(options =>
             {
                 // Set the limit to 100 MB
-                options.MultipartBodyLengthLimit = 104857600;
+                options.MultipartBodyLengthLimit = 104857600 * 2;
             });
 
             services
