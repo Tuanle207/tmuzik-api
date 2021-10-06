@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Requests;
 using Tmuzik.Core.Contract.Responses;
 using Tmuzik.Core.Entities;
@@ -20,7 +21,7 @@ namespace Tmuzik.Core.Services
             _storageHandler = storageHandler;
         }
 
-        public async Task<ClaimArtistResponse> ClaimArtistAsync(ClaimArtistRequest input, CancellationToken cancellationToken = default)
+        public async Task<ArtistInfo> ClaimArtistAsync(ClaimArtistRequest input, CancellationToken cancellationToken = default)
         {
             var userProfileId = CurrentUser.ProfileId.Value;
 
@@ -49,9 +50,15 @@ namespace Tmuzik.Core.Services
             var photoUrls = await Task.WhenAll(photosSavingTasks);
             artist.Photo.Items = photoUrls;
 
+            // Save change to DB
             artist = await UnitOfWork.Artists.AddAsync(artist);
 
-            var result = Mapper.Map<ClaimArtistResponse>(artist);
+            // Mark user's profile as artist
+            var userProfile = await UnitOfWork.UserProfiles.GetByIdAsync(userProfileId);
+            userProfile.IsArtist = true;
+            await UnitOfWork.UserProfiles.UpdateAsync(userProfile);
+
+            var result = Mapper.Map<ArtistInfo>(artist);
             return result;
         }
     }

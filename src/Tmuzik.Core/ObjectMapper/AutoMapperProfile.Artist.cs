@@ -1,4 +1,5 @@
 using System;
+using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Responses;
 using Tmuzik.Core.Entities;
 
@@ -8,13 +9,13 @@ namespace Tmuzik.Core.ObjectMapper
     {
         private void CreateArtistMaps()
         {
-            CreateMap<Artist, ClaimArtistResponse>()
-                .ConvertUsing(src => MapArtistToClaimArtistResponse(src));
+            CreateMap<Artist, ArtistInfo>()
+                .ConvertUsing(src => MapArtistToArtistInfo(src));
         }
 
-        private ClaimArtistResponse MapArtistToClaimArtistResponse(Artist src)
+        private ArtistInfo MapArtistToArtistInfo(Artist src)
         {
-            var result = new ClaimArtistResponse
+            var result = new ArtistInfo
             {
                 Id = src.Id,
                 Name = src.Name,
@@ -28,7 +29,8 @@ namespace Tmuzik.Core.ObjectMapper
                 InstagramUrl = src.InstagramUrl,
                 TwitterUrl = src.TwitterUrl,
                 YoutubeUrl = src.YoutubeUrl,
-                Verified = src.Verified
+                Verified = src.Verified,
+                CreationTime = src.CreationTime
             };
             return result;
         }

@@ -1,9 +1,9 @@
 using System;
 using Tmuzik.Core.Entities;
 
-namespace Tmuzik.Core.Contract.Responses
+namespace Tmuzik.Core.Contract.Models
 {
-    public class ClaimArtistResponse
+    public class ArtistInfo
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -18,5 +18,6 @@ namespace Tmuzik.Core.Contract.Responses
         public bool Verified { get; set; }
         public int Plays { get; set; }
         public int Follows { get; set; }
+        public DateTime CreationTime { get; set; }
     }
 }

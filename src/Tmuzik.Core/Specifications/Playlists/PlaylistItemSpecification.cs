@@ -10,6 +10,7 @@ namespace Tmuzik.Core.Specifications.Playlists
         public PlaylistItemSpecification(List<Guid> ListId)
         {
             Query
+                .AsNoTracking()
                 .Where(x => ListId.Contains(x.Id));
         }
 

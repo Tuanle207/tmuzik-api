@@ -38,7 +38,7 @@ namespace Tmuzik.Core.Services
 
             await UnitOfWork.Audios.AddAsync(audio, cancellationToken);
 
-            var audioSpec = new AudioIncludesFieldsSpecification(audio.Id);
+            var audioSpec = new AudioIncludesFieldsSpecification(audio.Id, false);
             var audioSelector = UnitOfWork.Audios.CreateSelector(x => Mapper.Map<AudioItem>(x));
             var result = await UnitOfWork.Audios.FirstOrDefaultAsync(audioSpec, audioSelector);
             return result;

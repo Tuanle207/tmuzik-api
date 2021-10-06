@@ -26,10 +26,28 @@ namespace Tmuzik.Core.ObjectMapper
 
             CreateMap<Playlist, PlaylistDetail>()
                 .ConvertUsing(src => MapPlaylistToPlaylistDetail(src));
+            
+            CreateMap<Playlist, SimplePlaylist>()
+                .ConvertUsing(src => MapPlaylistToSimplePlaylist(src));
 
             CreateMap<PlaylistItem, AudioItem>()
                 .ConvertUsing(src => MapPlaylistItemToAudioItem(src));
+
                 
+        }
+
+        private SimplePlaylist MapPlaylistToSimplePlaylist(Playlist src)
+        {
+            var result = new SimplePlaylist
+            {
+                Id = src.Id,
+                Name = src.Name,
+                Description = src.Description,
+                Cover = src.Cover,
+                CreationTime = src.CreationTime
+            };
+
+            return result;
         }
 
         private PlaylistDetail MapPlaylistToPlaylistDetail(Playlist src)

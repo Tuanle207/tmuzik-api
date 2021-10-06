@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,38 +22,45 @@ namespace Tmuzik.Api.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> Signup([FromBody] SignupRequest input)
+        public async Task<IActionResult> Signup([FromBody] SignupRequest input, CancellationToken cancellationToken)
         {
-            var result = await _identityService.SignupAsync(input);
+            var result = await _identityService.SignupAsync(input, cancellationToken);
             return Ok(result);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest input)
+        public async Task<IActionResult> Login(LoginRequest input, CancellationToken cancellationToken)
         {
-            var result = await _identityService.LoginAsync(input);
+            var result = await _identityService.LoginAsync(input, cancellationToken);
             return Ok(result);
         }
 
         [HttpPost("loginWithFacebook")]
-        public async Task<IActionResult> LoginWithFacebook([FromBody] LoginWithFacebookRequest input)
+        public async Task<IActionResult> LoginWithFacebook([FromBody] LoginWithFacebookRequest input, CancellationToken cancellationToken)
         {
-            var result = await _identityService.LoginWithFacebookAsync(input);
+            var result = await _identityService.LoginWithFacebookAsync(input, cancellationToken);
             return Ok(result);
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshLoginSession([FromBody] RefreshLoginRequest input)
+        public async Task<IActionResult> RefreshLoginSession([FromBody] RefreshLoginRequest input, CancellationToken cancellationToken)
         {
-            var result = await _identityService.RefreshLoginSessionAsync(input);
+            var result = await _identityService.RefreshLoginSessionAsync(input, cancellationToken);
             return Ok(result); 
         }
 
         [HttpPost("revoke")]
-        public async Task<IActionResult> RevokeLoginSession([FromBody] RevokeLoginRequest input)
+        public async Task<IActionResult> RevokeLoginSession([FromBody] RevokeLoginRequest input, CancellationToken cancellationToken)
         {
-            await _identityService.RevokeLoginSessionAsync(input);
+            await _identityService.RevokeLoginSessionAsync(input, cancellationToken);
             return NoContent(); 
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserProfile([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _identityService.GetUserProfileAsync(id, cancellationToken);
+            return Ok(result);
         }
     }
 }

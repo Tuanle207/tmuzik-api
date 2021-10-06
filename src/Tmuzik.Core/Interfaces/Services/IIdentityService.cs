@@ -15,5 +15,6 @@ namespace Tmuzik.Core.Interfaces.Services
         Task<RefreshLoginResponse> RefreshLoginSessionAsync(RefreshLoginRequest input, CancellationToken cancellationToken = default);
         Task RevokeLoginSessionAsync(RevokeLoginRequest input, CancellationToken cancellationToken = default);
         Task<AuthUser> GetUserForApplicationAuthAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<GetUserProfileResponse> GetUserProfileAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

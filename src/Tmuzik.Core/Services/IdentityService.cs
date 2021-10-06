@@ -1,9 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
+using Tmuzik.Common.Consts;
 using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Requests;
 using Tmuzik.Core.Contract.Responses;
@@ -12,7 +11,11 @@ using Tmuzik.Core.Exceptions;
 using Tmuzik.Core.Interfaces;
 using Tmuzik.Core.Interfaces.Helpers;
 using Tmuzik.Core.Interfaces.Services;
+using Tmuzik.Core.Specifications.Artists;
+using Tmuzik.Core.Specifications.Audios;
+using Tmuzik.Core.Specifications.Follows;
 using Tmuzik.Core.Specifications.Identities;
+using Tmuzik.Core.Specifications.Playlists;
 
 namespace Tmuzik.Core.Services
 {
@@ -52,6 +55,14 @@ namespace Tmuzik.Core.Services
             {
                 Data = Mapper.Map<LoginResponseData>(user)
             };
+
+            if (user.Profile.IsArtist)
+            {
+                var artistSpec = new ArtistSpecification(user.Profile.Id);
+                var artistSelector = UnitOfWork.Artists.CreateSelector(x => Mapper.Map<ArtistInfo>(x));
+                var artist = await UnitOfWork.Artists.FirstOrDefaultAsync(artistSpec, artistSelector);
+                result.Data.ArtistInfo = artist;
+            }
 
             result.Token = await GrantLoginToken(user.Id);
 
@@ -206,5 +217,44 @@ namespace Tmuzik.Core.Services
                 AccessToken = _authHelper.GenerateAccessToken(userId.ToString())
             };
         }
+
+        public async Task<GetUserProfileResponse> GetUserProfileAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var result = new GetUserProfileResponse();
+
+            var userProfileSpec = new UserProfileSpecification(id);
+            var userProfileSelector = UnitOfWork.UserProfiles.CreateSelector(x => Mapper.Map<UserInfo>(x));
+            var userProfile = await UnitOfWork.UserProfiles.FirstOrDefaultAsync(userProfileSpec, userProfileSelector, cancellationToken);
+            if (userProfile == null)
+            {
+                throw ExceptionBuilder.Build(CoreExceptions.NotFound);
+            }
+            result.UserInfo = userProfile;
+
+            var playlistSpec = new PlaylistSpecification(userProfile.ProfileId, PrivacyLevel.Public);
+            var playlistSelector = UnitOfWork.Playlists.CreateSelector(x => Mapper.Map<SimplePlaylist>(x));
+            var playlists = await UnitOfWork.Playlists.ListAsync(playlistSpec, playlistSelector, cancellationToken);
+            result.Playlists = playlists;
+
+            var simpleFollowSelector = UnitOfWork.UserFollows.CreateSelector(x => Mapper.Map<SimpleUserProfile>(x));
+            var followerSpec = new UserFollowerSpecification(userProfile.ProfileId);
+            var followingSpec = new UserFollowingSpecification(userProfile.ProfileId);
+            var followers = await UnitOfWork.UserFollows.ListAsync(followerSpec, simpleFollowSelector, cancellationToken);
+            var followings = await UnitOfWork.UserFollows.ListAsync(followingSpec, simpleFollowSelector, cancellationToken);
+            result.Followers = followers;
+            result.Followings = followings;
+
+            var currentProfileId = CurrentUser.ProfileId;
+            if (currentProfileId != null)
+            {
+                var uploadAudioSpec = new AudioIncludesFieldsSpecification(currentProfileId.Value, null);
+                var uploadAudioSelector = UnitOfWork.Audios.CreateSelector(x => Mapper.Map<AudioItem>(x));
+                var uploadAudios = await UnitOfWork.Audios.ListAsync(uploadAudioSpec, uploadAudioSelector, cancellationToken);
+                result.Uploads = uploadAudios;
+            }
+
+            return result;
+        }
+
     }
 }

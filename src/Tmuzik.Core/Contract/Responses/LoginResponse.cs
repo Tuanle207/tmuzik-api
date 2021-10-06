@@ -1,4 +1,5 @@
 using System;
+using Tmuzik.Core.Contract.Models;
 
 namespace Tmuzik.Core.Contract.Responses
 {
@@ -26,6 +27,7 @@ namespace Tmuzik.Core.Contract.Responses
         public string Cover { get; set; }
         public bool IsPremium { get; set; }
         public bool IsArtist { get; set; }
+        public ArtistInfo ArtistInfo { get; set; }
         
     }
 }

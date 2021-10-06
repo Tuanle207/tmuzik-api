@@ -15,6 +15,8 @@ namespace Tmuzik.Core.Interfaces
         IAsyncRepository<AlbumItem> AlbumItems { get; }
         IAsyncRepository<Playlist> Playlists { get; }
         IAsyncRepository<PlaylistItem> PlaylistItems { get; }
+        IAsyncRepository<UserFollow> UserFollows { get; }
+        IAsyncRepository<ArtistFollow> ArtistFollows { get; }
         Task CommitAsync(CancellationToken cancellationToken = default);
     }
 }

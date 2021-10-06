@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Tmuzik.Core.Contract.Requests;
@@ -17,9 +18,9 @@ namespace Tmuzik.Api.Controllers
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> ClaimArtist([FromForm] ClaimArtistRequest input)
+        public async Task<IActionResult> ClaimArtist([FromForm] ClaimArtistRequest input, CancellationToken cancellationToken)
         {
-            var result = await _artistService.ClaimArtistAsync(input);
+            var result = await _artistService.ClaimArtistAsync(input, cancellationToken);
             return Ok(result);
         }
     }

@@ -1,4 +1,5 @@
 
+using System;
 using AutoMapper;
 using Tmuzik.Core.Contract.Models;
 using Tmuzik.Core.Contract.Requests;
@@ -16,6 +17,39 @@ namespace Tmuzik.Core.ObjectMapper
                     
             CreateMap<User, LoginResponseData>()
                 .ConvertUsing(src => MapUserToLoginResponseData(src));
+
+            CreateMap<UserProfile, UserInfo>()
+                .ConvertUsing(src => MapUserProfileToUserInfo(src));
+
+            CreateMap<UserProfile, SimpleUserProfile>()
+                .ConvertUsing(src => MapUserProfileToSimpleUserProfile(src));
+        }
+
+        private SimpleUserProfile MapUserProfileToSimpleUserProfile(UserProfile src)
+        {
+            var result = new SimpleUserProfile
+            {
+                Id = src.UserId,
+                Name = src.FullName,
+                Avatar = src.Avatar
+            };
+
+            return result;
+        }
+
+        private UserInfo MapUserProfileToUserInfo(UserProfile src)
+        {
+            var result = new UserInfo
+            {
+                Id = src.UserId,
+                ProfileId = src.Id,
+                FullName = src.FullName,
+                Avatar = src.Avatar,
+                Cover = src.Cover,
+                Dob = src.Dob,
+            };
+
+            return result;
         }
 
         private AuthUser MapUserToAuthUser(User src)

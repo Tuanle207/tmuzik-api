@@ -9,6 +9,7 @@ namespace Tmuzik.Core.Specifications.Playlists
         public UserPlaylistSpecification(Guid creator)
         {
             Query
+                .AsNoTracking()
                 .Where(X => X.CreatorId == creator);
         }
     }

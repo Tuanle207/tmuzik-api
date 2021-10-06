@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Tmuzik.Common.Models;
 
 namespace Tmuzik.Core.Entities
@@ -21,6 +22,7 @@ namespace Tmuzik.Core.Entities
         public Guid CreatorId { get; set; }
 
         public UserProfile BelongsTo { get; set; }
+        public ICollection<ArtistFollow> Followers { get; set; }
 
         public Artist()
         {

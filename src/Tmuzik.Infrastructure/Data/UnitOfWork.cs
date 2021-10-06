@@ -23,6 +23,8 @@ namespace Tmuzik.Infrastructure.Data
         private IAsyncRepository<AlbumItem> _albumItems;
         private IAsyncRepository<Playlist> _playlists;
         private IAsyncRepository<PlaylistItem> _playlistItems;
+        private IAsyncRepository<UserFollow> _userFollows;
+        private IAsyncRepository<ArtistFollow> _artistFollows;
 
         
         public UnitOfWork(AppDbContext dbContext, IServiceProvider serviceProvider)
@@ -49,6 +51,10 @@ namespace Tmuzik.Infrastructure.Data
             _playlists ?? (_playlists = _serviceProvider.GetRequiredService<IAsyncRepository<Playlist>>());
         public IAsyncRepository<PlaylistItem> PlaylistItems =>
             _playlistItems ?? (_playlistItems = _serviceProvider.GetRequiredService<IAsyncRepository<PlaylistItem>>());
+        public IAsyncRepository<UserFollow> UserFollows =>
+            _userFollows ?? (_userFollows = _serviceProvider.GetRequiredService<IAsyncRepository<UserFollow>>());
+        public IAsyncRepository<ArtistFollow> ArtistFollows =>
+            _artistFollows ?? (_artistFollows = _serviceProvider.GetRequiredService<IAsyncRepository<ArtistFollow>>());
 
         public Task CommitAsync(CancellationToken cancellationToken = default)
         {

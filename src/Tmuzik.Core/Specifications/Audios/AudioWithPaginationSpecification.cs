@@ -1,6 +1,7 @@
 using System;
 using Ardalis.Specification;
 using Tmuzik.Common.Models;
+using Tmuzik.Common.Specification;
 using Tmuzik.Core.Contract.Requests;
 using Tmuzik.Core.Entities;
 
@@ -10,27 +11,20 @@ namespace Tmuzik.Core.Specifications.Audios
     {
         public AudioWithPaginationSpecification(PageModelRequest input)
         {
-            var pageIndex = input.PageIndex ?? 1;
-            var pageSize = input.PageSize ?? 10;
-
             Query
                 .AsNoTracking()
                 .Include(x => x.Artist)
-                .Skip(pageSize * (pageIndex - 1))
-                .Take(pageSize);
+                .Paginate(input);
+
         }
 
         public AudioWithPaginationSpecification(PageModelRequest input, Guid userId)
         {
-            var pageIndex = input.PageIndex ?? 1;
-            var pageSize = input.PageSize ?? 10;
-
             Query
                 .AsNoTracking()
                 .Where(x => x.CreatorId == userId)
                 .Include(x => x.Artist)
-                .Skip(pageSize * (pageIndex - 1))
-                .Take(pageSize);
+                .Paginate(input);
         }
     }
 }

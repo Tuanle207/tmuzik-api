@@ -10,6 +10,7 @@ namespace Tmuzik.Core.Specifications.Playlists
         public PlaylistSpecification(Guid playlistId)
         {
             Query
+                .AsNoTracking()
                 .Where(x => x.Id == playlistId)
                 .Include(x => x.Items)
                 .ThenInclude(x => x.Audio)
@@ -21,6 +22,17 @@ namespace Tmuzik.Core.Specifications.Playlists
                 .ThenInclude(x => x.Audio)
                 .ThenInclude(x => x.UploadedBy);
 
+        }
+
+        public PlaylistSpecification(Guid creatorId, string privacyLevel)
+        {
+            Query.AsNoTracking()
+                .Where(x => x.CreatorId == creatorId);
+            
+            if (!String.IsNullOrEmpty(privacyLevel))
+            {
+                Query.Where(x => x.Privacy == privacyLevel);
+            }
         }
     }
 }
